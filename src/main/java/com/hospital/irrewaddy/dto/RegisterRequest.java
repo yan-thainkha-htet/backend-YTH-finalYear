@@ -1,20 +1,26 @@
 package com.hospital.irrewaddy.dto;
 
-import com.hospital.irrewaddy.model.User;
+import com.hospital.irrewaddy.model.Patient;
 import jakarta.validation.constraints.*;
+
+import java.time.LocalDate;
 
 public class RegisterRequest {
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Username can only contain letters, numbers, and underscores")
-    private String username;
+    @NotBlank(message = "First name is required")
+    @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
+    private String firstName;
 
-    @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$",
-            message = "Password must contain at least one digit, one lowercase, one uppercase, and one special character")
-    private String password;
+    @NotBlank(message = "Last name is required")
+    @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters")
+    private String lastName;
+
+    @NotNull(message = "Date of birth is required")
+    @Past(message = "Date of birth must be in the past")
+    private LocalDate dateOfBirth;
+
+    @NotNull(message = "Gender is required")
+    private Patient.Gender gender;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
@@ -25,41 +31,65 @@ public class RegisterRequest {
     @Pattern(regexp = "^[0-9]{10,15}$", message = "Phone number must be between 10 and 15 digits")
     private String phone;
 
-    @NotBlank(message = "Full name is required")
-    @Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters")
-    private String fullName;
+    private String address; // Optional
 
-    @NotNull(message = "Role is required")
-    private User.UserRole role;
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$",
+            message = "Password must contain at least one digit, one lowercase, one uppercase, and one special character")
+    private String password;
+
+    @NotBlank(message = "Confirm password is required")
+    private String confirmPassword;
 
     // Constructors
     public RegisterRequest() {
     }
 
-    public RegisterRequest(String username, String password, String email, String phone, String fullName, User.UserRole role) {
-        this.username = username;
-        this.password = password;
+    public RegisterRequest(String firstName, String lastName, LocalDate dateOfBirth, Patient.Gender gender,
+                           String email, String phone, String address, String password, String confirmPassword) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
         this.email = email;
         this.phone = phone;
-        this.fullName = fullName;
-        this.role = role;
+        this.address = address;
+        this.password = password;
+        this.confirmPassword = confirmPassword;
     }
 
     // Getters and Setters
-    public String getUsername() {
-        return username;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getPassword() {
-        return password;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Patient.Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Patient.Gender gender) {
+        this.gender = gender;
     }
 
     public String getEmail() {
@@ -78,19 +108,37 @@ public class RegisterRequest {
         this.phone = phone;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
+    // Helper method to get full name
     public String getFullName() {
-        return fullName;
+        return firstName + " " + lastName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public User.UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(User.UserRole role) {
-        this.role = role;
+    // Helper method to generate username from email
+    public String generateUsername() {
+        return email.split("@")[0];
     }
 }

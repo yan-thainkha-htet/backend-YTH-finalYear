@@ -3,7 +3,9 @@ package com.hospital.irrewaddy.service;
 import com.hospital.irrewaddy.dto.AuthResponse;
 import com.hospital.irrewaddy.dto.LoginRequest;
 import com.hospital.irrewaddy.dto.RegisterRequest;
+import com.hospital.irrewaddy.model.Patient;
 import com.hospital.irrewaddy.model.User;
+import com.hospital.irrewaddy.repository.PatientRepository;
 import com.hospital.irrewaddy.repository.UserRepository;
 import com.hospital.irrewaddy.security.JwtUtil;
 import com.hospital.irrewaddy.util.ValidationUtil;
@@ -14,12 +16,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PatientRepository patientRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -30,10 +36,24 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Transactional
     public AuthResponse register(RegisterRequest request) {
+        // Validate password confirmation
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new RuntimeException("Passwords do not match");
+        }
+
+        // Generate username from email
+        String username = request.generateUsername();
+
         // Check username uniqueness
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("Username already exists");
+        if (userRepository.existsByUsername(username)) {
+            // If username exists, append a number
+            int counter = 1;
+            while (userRepository.existsByUsername(username + counter)) {
+                counter++;
+            }
+            username = username + counter;
         }
 
         // Check email uniqueness
@@ -41,38 +61,50 @@ public class AuthService {
             throw new RuntimeException("Email already exists");
         }
 
-        // Check phone uniqueness ← NEW
+        // Check phone uniqueness
         if (userRepository.existsByPhone(request.getPhone())) {
             throw new RuntimeException("Phone number already exists");
         }
 
-        // Validate email format (additional check)
+        // Validate email format
         if (!ValidationUtil.isValidEmail(request.getEmail())) {
             throw new RuntimeException("Invalid email format");
         }
 
-        // Validate phone format (additional check)
+        // Validate phone format
         if (!ValidationUtil.isValidPhone(request.getPhone())) {
             throw new RuntimeException("Invalid phone number format");
         }
 
-        // Validate password strength (additional check)
+        // Validate password strength
         String passwordError = ValidationUtil.validatePassword(request.getPassword());
         if (passwordError != null) {
             throw new RuntimeException(passwordError);
         }
 
-        // Create new user
+        // Create User entity
         User user = new User();
-        user.setUsername(request.getUsername().trim().toLowerCase());
+        user.setUsername(username);
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail().trim().toLowerCase());
         user.setPhone(request.getPhone().trim());
-        user.setFullName(request.getFullName().trim());
-        user.setRole(request.getRole());
+        user.setFullName(request.getFullName());
+        user.setRole(User.UserRole.PATIENT); // Auto-assign PATIENT role
         user.setIsActive(true);
 
-        userRepository.save(user);
+        // Save user first
+        user = userRepository.save(user);
+
+        // Create Patient entity with additional information
+        Patient patient = new Patient();
+        patient.setUser(user);
+        patient.setDateOfBirth(request.getDateOfBirth());
+        patient.setGender(request.getGender());
+        patient.setAddress(request.getAddress());
+        // Other patient fields can be null initially and filled later
+
+        // Save patient
+        patientRepository.save(patient);
 
         // Generate token
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
@@ -82,28 +114,30 @@ public class AuthService {
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole(),
-                "User registered successfully"
+                "Registration successful"
         );
     }
 
     public AuthResponse login(LoginRequest request) {
         try {
-            // Authenticate user
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            request.getUsername().trim().toLowerCase(),
-                            request.getPassword()
-                    )
-            );
+            String usernameOrEmail = request.getUsernameOrEmail().trim().toLowerCase();
 
-            // Get user details
-            User user = userRepository.findByUsername(request.getUsername().trim().toLowerCase())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+            // Find user by username or email
+            User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                    .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
             // Check if user is active
             if (!user.getIsActive()) {
                 throw new RuntimeException("Account is deactivated. Please contact support.");
             }
+
+            // Authenticate user with username (not email)
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            user.getUsername(), // Use actual username for authentication
+                            request.getPassword()
+                    )
+            );
 
             // Generate token
             String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());

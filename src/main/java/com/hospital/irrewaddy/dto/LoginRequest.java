@@ -5,28 +5,31 @@ import jakarta.validation.constraints.Size;
 
 public class LoginRequest {
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-    private String username;
+    @NotBlank(message = "Email or Username is required")
+    @Size(min = 3, max = 100, message = "Email or Username must be between 3 and 100 characters")
+    private String usernameOrEmail;
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
     private String password;
 
+    private Boolean rememberMe; // Optional
+
     public LoginRequest() {
     }
 
-    public LoginRequest(String username, String password) {
-        this.username = username;
+    public LoginRequest(String usernameOrEmail, String password, Boolean rememberMe) {
+        this.usernameOrEmail = usernameOrEmail;
         this.password = password;
+        this.rememberMe = rememberMe;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUsernameOrEmail() {
+        return usernameOrEmail;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsernameOrEmail(String usernameOrEmail) {
+        this.usernameOrEmail = usernameOrEmail;
     }
 
     public String getPassword() {
@@ -35,5 +38,13 @@ public class LoginRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Boolean getRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(Boolean rememberMe) {
+        this.rememberMe = rememberMe;
     }
 }
