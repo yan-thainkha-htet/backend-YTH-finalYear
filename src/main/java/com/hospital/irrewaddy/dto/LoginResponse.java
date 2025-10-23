@@ -1,24 +1,19 @@
 package com.hospital.irrewaddy.dto;
 
-import com.hospital.irrewaddy.model.User;
-
-public class AuthResponse {
+public class LoginResponse {
     private String token;
     private String username;
-    private String email;
-    private User.UserRole role;
+    private String role;
     private Boolean mustChangePassword; // Add this field
     private String message;
 
     // Constructors
-    public AuthResponse() {
+    public LoginResponse() {
     }
 
-    public AuthResponse(String token, String username, String email, User.UserRole role,
-                        Boolean mustChangePassword, String message) {
+    public LoginResponse(String token, String username, String role, Boolean mustChangePassword, String message) {
         this.token = token;
         this.username = username;
-        this.email = email;
         this.role = role;
         this.mustChangePassword = mustChangePassword;
         this.message = message;
@@ -41,19 +36,11 @@ public class AuthResponse {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public User.UserRole getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(User.UserRole role) {
+    public void setRole(String role) {
         this.role = role;
     }
 

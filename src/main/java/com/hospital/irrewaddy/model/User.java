@@ -43,6 +43,21 @@ public class User {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
+    @Column(name = "must_change_password", nullable = false)
+    private Boolean mustChangePassword = false;
+
+    @Column(name = "last_password_change")
+    private LocalDateTime lastPasswordChange;
+
+    @Column(name = "password_reset_otp", length = 255)
+    private String passwordResetOtp;
+
+    @Column(name = "otp_expiry")
+    private LocalDateTime otpExpiry;
+
+    @Column(name = "otp_attempts")
+    private Integer otpAttempts = 0;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -71,7 +86,18 @@ public class User {
         ADMIN
     }
 
-    // Manual Getters and Setters
+    public Boolean getMustChangePassword() {
+        return mustChangePassword;
+    }
+    public void setMustChangePassword(Boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
+    }
+    public LocalDateTime getLastPasswordChange() {
+        return lastPasswordChange;
+    }
+    public void setLastPasswordChange(LocalDateTime lastPasswordChange) {
+        this.lastPasswordChange = lastPasswordChange;
+    }
     public Long getId() {
         return id;
     }
@@ -182,5 +208,29 @@ public class User {
 
     public void setAdmin(Admin admin) {
         this.admin = admin;
+    }
+
+    public String getPasswordResetOtp() {
+        return passwordResetOtp;
+    }
+
+    public void setPasswordResetOtp(String passwordResetOtp) {
+        this.passwordResetOtp = passwordResetOtp;
+    }
+
+    public LocalDateTime getOtpExpiry() {
+        return otpExpiry;
+    }
+
+    public void setOtpExpiry(LocalDateTime otpExpiry) {
+        this.otpExpiry = otpExpiry;
+    }
+
+    public Integer getOtpAttempts() {
+        return otpAttempts;
+    }
+
+    public void setOtpAttempts(Integer otpAttempts) {
+        this.otpAttempts = otpAttempts;
     }
 }

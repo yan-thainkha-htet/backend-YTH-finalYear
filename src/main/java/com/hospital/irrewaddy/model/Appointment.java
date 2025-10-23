@@ -1,28 +1,18 @@
 package com.hospital.irrewaddy.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 @Entity
 @Table(name = "appointment")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Appointment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column
     private Long id;
 
     @ManyToOne
@@ -50,39 +40,163 @@ public class Appointment {
     @Column(name = "reason", columnDefinition = "TEXT")
     private String reason;
 
-    @Column(name = "doctor_notes", columnDefinition = "TEXT")
-    private String doctorNotes;
+    @Column(name = "notes", columnDefinition = "TEXT")
+    private String notes;
 
-    @Column(name = "consultation_fee", precision = 10, scale = 2)
-    private BigDecimal consultationFee;
-
-    @Column(name = "payment_status", nullable = false)
-    private Boolean paymentStatus = false;
-
-    @Column(name = "booked_by")
-    private Long bookedBy; // User ID who booked (patient or receptionist)
+    @Column(name = "token_number")
+    private Integer tokenNumber;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Relationships
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
-    private List<Prescription> prescriptions;
+    @ManyToOne
+    @JoinColumn(name = "receptionist_id")
+    private Receptionist receptionist;
 
-    @OneToMany(mappedBy = "appointment", cascade = CascadeType.ALL)
-    private List<MedicalRecord> medicalRecords;
-
-    // Enum for Appointment Status
+    // Enums
     public enum AppointmentStatus {
         PENDING,
         CONFIRMED,
         COMPLETED,
-        CANCELLED
+        CANCELLED,
+        RESCHEDULED,
+        NO_SHOW
+    }
+
+    // Constructors
+    public Appointment() {
+    }
+
+    public Appointment(Long id, Patient patient, Doctor doctor, Department department,
+                       LocalDate appointmentDate, LocalTime appointmentTime,
+                       AppointmentStatus status, String reason, String notes,
+                       Integer tokenNumber, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.patient = patient;
+        this.doctor = doctor;
+        this.department = department;
+        this.appointmentDate = appointmentDate;
+        this.appointmentTime = appointmentTime;
+        this.status = status;
+        this.reason = reason;
+        this.notes = notes;
+        this.tokenNumber = tokenNumber;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
+    public Receptionist getReceptionist() {
+        return receptionist;
+    }
+
+    public void setReceptionist(Receptionist receptionist) {
+        this.receptionist = receptionist;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public LocalDate getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(LocalDate appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public LocalTime getAppointmentTime() {
+        return appointmentTime;
+    }
+
+    public void setAppointmentTime(LocalTime appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
+
+    public AppointmentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AppointmentStatus status) {
+        this.status = status;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public Integer getTokenNumber() {
+        return tokenNumber;
+    }
+
+    public void setTokenNumber(Integer tokenNumber) {
+        this.tokenNumber = tokenNumber;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    // Lifecycle callback
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 }
-
