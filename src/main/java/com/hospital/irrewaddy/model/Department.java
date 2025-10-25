@@ -23,10 +23,6 @@ public class Department {
     @ManyToOne
     @JoinColumn(name = "department_head_id")
     private Doctor departmentHead;
-
-    @Column(name = "capacity")
-    private Integer capacity;
-
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
@@ -51,7 +47,6 @@ public class Department {
         this.name = name;
         this.description = description;
         this.departmentHead = departmentHead;
-        this.capacity = capacity;
         this.isActive = isActive;
         this.createdAt = createdAt;
     }
@@ -88,15 +83,6 @@ public class Department {
     public void setDepartmentHead(Doctor departmentHead) {
         this.departmentHead = departmentHead;
     }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
-
     public Boolean getIsActive() {
         return isActive;
     }

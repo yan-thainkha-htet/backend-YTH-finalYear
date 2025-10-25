@@ -34,10 +34,6 @@ public class Doctor {
 
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
-
-    @Column(name = "rating", columnDefinition = "FLOAT DEFAULT 0")
-    private Float rating = 0.0f;
-
     @Column(name = "total_patients", columnDefinition = "INT DEFAULT 0")
     private Integer totalPatients = 0;
 
@@ -48,11 +44,6 @@ public class Doctor {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     private List<DoctorAvailability> availabilities;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
-    private List<DoctorLeave> leaves;
-
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
-    private List<MedicalRecord> medicalRecords;
 
     // Constructors
     public Doctor() {
@@ -123,13 +114,7 @@ public class Doctor {
         this.bio = bio;
     }
 
-    public Float getRating() {
-        return rating;
-    }
 
-    public void setRating(Float rating) {
-        this.rating = rating;
-    }
 
     public Integer getTotalPatients() {
         return totalPatients;
@@ -155,19 +140,4 @@ public class Doctor {
         this.availabilities = availabilities;
     }
 
-    public List<DoctorLeave> getLeaves() {
-        return leaves;
-    }
-
-    public void setLeaves(List<DoctorLeave> leaves) {
-        this.leaves = leaves;
-    }
-
-    public List<MedicalRecord> getMedicalRecords() {
-        return medicalRecords;
-    }
-
-    public void setMedicalRecords(List<MedicalRecord> medicalRecords) {
-        this.medicalRecords = medicalRecords;
-    }
 }

@@ -90,7 +90,6 @@ public class DoctorService {
         doctor.setExperienceYears(request.getExperienceYears());
         doctor.setConsultationFee(request.getConsultationFee());
         doctor.setBio(request.getBio());
-        doctor.setRating(0.0f);
         doctor.setTotalPatients(0);
 
 
@@ -217,7 +216,6 @@ public class DoctorService {
         response.setExperienceYears(doctor.getExperienceYears());
         response.setConsultationFee(doctor.getConsultationFee());
         response.setBio(doctor.getBio());
-        response.setRating(doctor.getRating());
         response.setTotalPatients(doctor.getTotalPatients());
         response.setDepartmentName(doctor.getDepartment() != null ? doctor.getDepartment().getName() : null);
         response.setIsActive(doctor.getUser().getIsActive());

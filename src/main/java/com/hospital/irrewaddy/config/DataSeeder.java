@@ -85,7 +85,6 @@ public class DataSeeder implements CommandLineRunner {
                 Department dept = new Department();
                 dept.setName(deptNames[i]);
                 dept.setDescription(deptDescs[i]);
-                dept.setCapacity(capacities[i]);
                 dept.setIsActive(true);
                 departmentRepository.save(dept);
             }

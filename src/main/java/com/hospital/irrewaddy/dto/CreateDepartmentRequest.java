@@ -13,9 +13,6 @@ public class CreateDepartmentRequest {
     @Size(max = 1000, message = "Description must not exceed 1000 characters")
     private String description;
 
-    @Min(value = 0, message = "Capacity cannot be negative")
-    private Integer capacity;
-
     private Long departmentHeadId; // Doctor ID who is head of department (optional)
 
     private Boolean isActive = true; // Default to active
@@ -24,10 +21,9 @@ public class CreateDepartmentRequest {
     public CreateDepartmentRequest() {
     }
 
-    public CreateDepartmentRequest(String name, String description, Integer capacity, Long departmentHeadId, Boolean isActive) {
+    public CreateDepartmentRequest(String name, String description, Long departmentHeadId, Boolean isActive) {
         this.name = name;
         this.description = description;
-        this.capacity = capacity;
         this.departmentHeadId = departmentHeadId;
         this.isActive = isActive;
     }
@@ -48,15 +44,6 @@ public class CreateDepartmentRequest {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
-
     public Long getDepartmentHeadId() {
         return departmentHeadId;
     }

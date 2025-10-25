@@ -33,7 +33,6 @@ public class DepartmentService {
         Department department = new Department();
         department.setName(request.getName().trim());
         department.setDescription(request.getDescription());
-        department.setCapacity(request.getCapacity());
         department.setIsActive(request.getIsActive());
 
         // Set department head if provided
@@ -88,7 +87,6 @@ public class DepartmentService {
         }
 
         department.setDescription(request.getDescription());
-        department.setCapacity(request.getCapacity());
         department.setIsActive(request.getIsActive());
 
         // Update department head if provided
@@ -140,7 +138,6 @@ public class DepartmentService {
         response.setId(department.getId());
         response.setName(department.getName());
         response.setDescription(department.getDescription());
-        response.setCapacity(department.getCapacity());
         response.setIsActive(department.getIsActive());
         response.setCreatedAt(department.getCreatedAt());
 

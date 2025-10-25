@@ -21,14 +21,5 @@ public class Admin {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "access_level", length = 20)
-    private com.hospital.irrewaddy.model.Admin.AccessLevel accessLevel;
-
-    // Enum for Access Level
-    public enum AccessLevel {
-        SUPER_ADMIN,
-        ADMIN
-    }
 }
 

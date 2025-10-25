@@ -6,7 +6,6 @@ public class DepartmentResponse {
     private Long id;
     private String name;
     private String description;
-    private Integer capacity;
     private String departmentHeadName;
     private Long departmentHeadId;
     private Integer totalDoctors;
@@ -24,7 +23,6 @@ public class DepartmentResponse {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.capacity = capacity;
         this.departmentHeadName = departmentHeadName;
         this.departmentHeadId = departmentHeadId;
         this.totalDoctors = totalDoctors;
@@ -56,14 +54,6 @@ public class DepartmentResponse {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Integer getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
     }
 
     public String getDepartmentHeadName() {
