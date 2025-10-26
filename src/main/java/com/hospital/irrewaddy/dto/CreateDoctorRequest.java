@@ -35,10 +35,6 @@ public class CreateDoctorRequest {
     @Size(max = 255, message = "Qualification must not exceed 255 characters")
     private String qualification;
 
-    @NotNull(message = "Consultation fee is required")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Consultation fee must be greater than 0")
-    private BigDecimal consultationFee;
-
     private String bio; // Optional
 
     private Long departmentId; // Optional
@@ -116,14 +112,6 @@ public class CreateDoctorRequest {
 
     public void setQualification(String qualification) {
         this.qualification = qualification;
-    }
-
-    public BigDecimal getConsultationFee() {
-        return consultationFee;
-    }
-
-    public void setConsultationFee(BigDecimal consultationFee) {
-        this.consultationFee = consultationFee;
     }
 
     public String getBio() {

@@ -12,7 +12,6 @@ public class DoctorResponse {
     private String specialization;
     private String qualification;
     private Integer experienceYears;
-    private BigDecimal consultationFee;
     private String bio;
     private Float rating;
     private Integer totalPatients;
@@ -26,7 +25,7 @@ public class DoctorResponse {
 
     public DoctorResponse(Long id, Long userId, String username, String fullName, String email,
                           String phone, String specialization, String qualification,
-                          Integer experienceYears, BigDecimal consultationFee, String bio,
+                          Integer experienceYears, String bio,
                           Float rating, Integer totalPatients, String departmentName,
                           Boolean isActive, String message) {
         this.id = id;
@@ -38,7 +37,6 @@ public class DoctorResponse {
         this.specialization = specialization;
         this.qualification = qualification;
         this.experienceYears = experienceYears;
-        this.consultationFee = consultationFee;
         this.bio = bio;
         this.rating = rating;
         this.totalPatients = totalPatients;
@@ -118,14 +116,6 @@ public class DoctorResponse {
 
     public void setExperienceYears(Integer experienceYears) {
         this.experienceYears = experienceYears;
-    }
-
-    public BigDecimal getConsultationFee() {
-        return consultationFee;
-    }
-
-    public void setConsultationFee(BigDecimal consultationFee) {
-        this.consultationFee = consultationFee;
     }
 
     public String getBio() {

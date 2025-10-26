@@ -88,7 +88,6 @@ public class DoctorService {
         doctor.setSpecialization(request.getSpecialization());
         doctor.setQualification(request.getQualification());
         doctor.setExperienceYears(request.getExperienceYears());
-        doctor.setConsultationFee(request.getConsultationFee());
         doctor.setBio(request.getBio());
         doctor.setTotalPatients(0);
 
@@ -176,7 +175,6 @@ public class DoctorService {
         doctor.setSpecialization(request.getSpecialization());
         doctor.setQualification(request.getQualification());
         doctor.setExperienceYears(request.getExperienceYears());
-        doctor.setConsultationFee(request.getConsultationFee());
         doctor.setBio(request.getBio());
 
         // Update department if provided
@@ -214,7 +212,6 @@ public class DoctorService {
         response.setSpecialization(doctor.getSpecialization());
         response.setQualification(doctor.getQualification());
         response.setExperienceYears(doctor.getExperienceYears());
-        response.setConsultationFee(doctor.getConsultationFee());
         response.setBio(doctor.getBio());
         response.setTotalPatients(doctor.getTotalPatients());
         response.setDepartmentName(doctor.getDepartment() != null ? doctor.getDepartment().getName() : null);

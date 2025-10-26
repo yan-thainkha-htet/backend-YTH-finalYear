@@ -28,10 +28,6 @@ public class Doctor {
 
     @Column(name = "experience_years")
     private Integer experienceYears;
-
-    @Column(name = "consultation_fee", nullable = false, precision = 10, scale = 2)
-    private BigDecimal consultationFee;
-
     @Column(name = "bio", columnDefinition = "TEXT")
     private String bio;
     @Column(name = "total_patients", columnDefinition = "INT DEFAULT 0")
@@ -96,14 +92,6 @@ public class Doctor {
 
     public void setExperienceYears(Integer experienceYears) {
         this.experienceYears = experienceYears;
-    }
-
-    public BigDecimal getConsultationFee() {
-        return consultationFee;
-    }
-
-    public void setConsultationFee(BigDecimal consultationFee) {
-        this.consultationFee = consultationFee;
     }
 
     public String getBio() {
