@@ -1,8 +1,10 @@
 package com.hospital.irrewaddy.config;
 
+import com.hospital.irrewaddy.model.Admin;
 import com.hospital.irrewaddy.model.Department;
 import com.hospital.irrewaddy.model.Receptionist;
 import com.hospital.irrewaddy.model.User;
+import com.hospital.irrewaddy.repository.AdminRepository;
 import com.hospital.irrewaddy.repository.DepartmentRepository;
 import com.hospital.irrewaddy.repository.ReceptionistRepository;
 import com.hospital.irrewaddy.repository.UserRepository;
@@ -18,6 +20,9 @@ public class DataSeeder implements CommandLineRunner {
     private UserRepository userRepository;
 
     @Autowired
+    private AdminRepository adminRepository;
+
+    @Autowired
     private DepartmentRepository departmentRepository;
 
     @Autowired
@@ -29,44 +34,23 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Create admin if not exists
-        if (!userRepository.existsByRole(User.UserRole.ADMIN)) {
-            User admin = new User();
-            admin.setUsername("admin@hospital.com");
-            admin.setPasswordHash(passwordEncoder.encode("Admin@123"));
-            admin.setEmail("hlyanhtet442@gmail.com");
-            admin.setPhone("09294285689");
-            admin.setFullName("Super Admin");
-            admin.setRole(User.UserRole.ADMIN);
-            admin.setIsActive(true);
-            admin.setMustChangePassword(true); // ← Force password change
-            userRepository.save(admin);
-            System.out.println("✅ Admin user created: admin@hospital.com / Admin@123");
-            System.out.println("⚠️  IMPORTANT: Admin must change password on first login!");
-        }
+        if (!userRepository.existsByRole(User.UserRole.SUPER_ADMIN)) {
+            User user = new User();
+            user.setFullName("Super Admin");
+            user.setUsername("admin@irrewaddy");
+            user.setPasswordHash(passwordEncoder.encode("Admin@123"));
+            user.setPhone("09294285689");
+            user.setEmail("admin@irrewaddy.com");
+            user.setRole(User.UserRole.SUPER_ADMIN);
+            user.setIsActive(true);
+            user.setMustChangePassword(true); // ← Force password change
+            userRepository.save(user);
 
-        // Create sample receptionist if not exists
-        if (!userRepository.existsByRole(User.UserRole.RECEPTIONIST)) {
-            User receptionistUser = new User();
-            receptionistUser.setUsername("receptionist_222");
-            receptionistUser.setPasswordHash(passwordEncoder.encode("Reception@123"));
-            receptionistUser.setEmail("receptionist22@gmail.com");
-            receptionistUser.setPhone("8888888888");
-            receptionistUser.setFullName("Emma Wilson");
-            receptionistUser.setRole(User.UserRole.RECEPTIONIST);
-            receptionistUser.setIsActive(true);
-            receptionistUser.setMustChangePassword(true); // ← Force password change
-            receptionistUser = userRepository.save(receptionistUser);
-
-            Receptionist receptionist = new Receptionist();
-            receptionist.setUser(receptionistUser);
-            receptionist.setEmployeeId("REC001");
-            receptionist.setShift("MORNING");
-            receptionist.setDeskNumber(1);
-            receptionist.setIsOnDuty(true);
-            receptionistRepository.save(receptionist);
-
-            System.out.println("✅ Receptionist created: receptionist@hospital.com / Reception@123");
-            System.out.println("⚠️  IMPORTANT: Receptionist must change password on first login!");
+            Admin admin = new Admin();
+            admin.setUser(user);
+            admin = adminRepository.save(admin);
+            //System.out.println("✅ Admin user created: admin@hospital.com / Admin@123");
+            //System.out.println("⚠️  IMPORTANT: Admin must change password on first login!");
         }
 
         // Create sample departments if not exist

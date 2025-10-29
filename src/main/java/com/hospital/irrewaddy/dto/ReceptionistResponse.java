@@ -1,5 +1,8 @@
 package com.hospital.irrewaddy.dto;
 
+import com.hospital.irrewaddy.model.Receptionist;
+import com.hospital.irrewaddy.model.User;
+
 import java.time.LocalDateTime;
 
 public class ReceptionistResponse {
@@ -9,11 +12,10 @@ public class ReceptionistResponse {
     private String fullName;
     private String email;
     private String phone;
-    private String employeeId;
-    private String shift;
+    private User.Gender gender;
+    private Receptionist.Shift shift;
     private Integer deskNumber;
     private LocalDateTime joinedDate;
-    private Boolean isOnDuty;
     private Boolean isActive;
     private Integer managedAppointmentsCount;
     private String message;
@@ -71,19 +73,17 @@ public class ReceptionistResponse {
         this.phone = phone;
     }
 
-    public String getEmployeeId() {
-        return employeeId;
+    public User.Gender getGender(){ return gender; }
+
+    public void setGender(User.Gender gender) {
+        this.gender = gender;
     }
 
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public String getShift() {
+    public Receptionist.Shift getShift() {
         return shift;
     }
 
-    public void setShift(String shift) {
+    public void setShift(Receptionist.Shift shift) {
         this.shift = shift;
     }
 
@@ -101,14 +101,6 @@ public class ReceptionistResponse {
 
     public void setJoinedDate(LocalDateTime joinedDate) {
         this.joinedDate = joinedDate;
-    }
-
-    public Boolean getIsOnDuty() {
-        return isOnDuty;
-    }
-
-    public void setIsOnDuty(Boolean isOnDuty) {
-        this.isOnDuty = isOnDuty;
     }
 
     public Boolean getIsActive() {

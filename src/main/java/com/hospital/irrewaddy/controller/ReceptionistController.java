@@ -2,6 +2,7 @@ package com.hospital.irrewaddy.controller;
 
 import com.hospital.irrewaddy.dto.CreateReceptionistRequest;
 import com.hospital.irrewaddy.dto.ReceptionistResponse;
+import com.hospital.irrewaddy.model.Receptionist;
 import com.hospital.irrewaddy.service.ReceptionistService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,22 +46,10 @@ public class ReceptionistController {
         }
     }
 
-    // Get on-duty receptionists
-    @GetMapping("/on-duty")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
-    public ResponseEntity<?> getOnDutyReceptionists() {
-        try {
-            List<ReceptionistResponse> receptionists = receptionistService.getOnDutyReceptionists();
-            return ResponseEntity.ok(receptionists);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
     // Get receptionists by shift
     @GetMapping("/shift/{shift}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getReceptionistsByShift(@PathVariable String shift) {
+    public ResponseEntity<?> getReceptionistsByShift(@PathVariable Receptionist.Shift shift) {
         try {
             List<ReceptionistResponse> receptionists = receptionistService.getReceptionistsByShift(shift);
             return ResponseEntity.ok(receptionists);
@@ -105,24 +94,6 @@ public class ReceptionistController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
-    // Update duty status
-    @PatchMapping("/{id}/duty-status")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPTIONIST')")
-    public ResponseEntity<?> updateDutyStatus(@PathVariable Long id,
-                                              @RequestBody Map<String, Boolean> request) {
-        try {
-            Boolean isOnDuty = request.get("isOnDuty");
-            if (isOnDuty == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("isOnDuty field is required");
-            }
-            ReceptionistResponse response = receptionistService.updateDutyStatus(id, isOnDuty);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
     // Delete receptionist (Admin only) - Soft delete
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")

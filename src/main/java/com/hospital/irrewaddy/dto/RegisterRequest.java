@@ -1,6 +1,7 @@
 package com.hospital.irrewaddy.dto;
 
 import com.hospital.irrewaddy.model.Patient;
+import com.hospital.irrewaddy.model.User;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -20,7 +21,7 @@ public class RegisterRequest {
     private LocalDate dateOfBirth;
 
     @NotNull(message = "Gender is required")
-    private Patient.Gender gender;
+    private User.Gender gender;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
@@ -46,7 +47,7 @@ public class RegisterRequest {
     public RegisterRequest() {
     }
 
-    public RegisterRequest(String firstName, String lastName, LocalDate dateOfBirth, Patient.Gender gender,
+    public RegisterRequest(String firstName, String lastName, LocalDate dateOfBirth, User.Gender gender,
                            String email, String phone, String address, String password, String confirmPassword) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -84,11 +85,11 @@ public class RegisterRequest {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Patient.Gender getGender() {
+    public User.Gender getGender() {
         return gender;
     }
 
-    public void setGender(Patient.Gender gender) {
+    public void setGender(User.Gender gender) {
         this.gender = gender;
     }
 

@@ -47,11 +47,6 @@ public class ReceptionistService {
             throw new RuntimeException("Phone number already exists");
         }
 
-        // Check employee ID uniqueness
-        if (receptionistRepository.existsByEmployeeId(request.getEmployeeId())) {
-            throw new RuntimeException("Employee ID already exists");
-        }
-
         // Validate email format
         if (!ValidationUtil.isValidEmail(request.getEmail())) {
             throw new RuntimeException("Invalid email format");
@@ -74,6 +69,7 @@ public class ReceptionistService {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail().trim().toLowerCase());
         user.setPhone(request.getPhone().trim());
+        user.setGender( User.Gender.valueOf(request.getGender()) );
         user.setFullName(request.getFullName().trim());
         user.setRole(User.UserRole.RECEPTIONIST);
         user.setIsActive(request.getIsActive());
@@ -85,10 +81,8 @@ public class ReceptionistService {
         // Create Receptionist entity
         Receptionist receptionist = new Receptionist();
         receptionist.setUser(user);
-        receptionist.setEmployeeId(request.getEmployeeId());
         receptionist.setShift(request.getShift());
         receptionist.setDeskNumber(request.getDeskNumber());
-        receptionist.setIsOnDuty(true);
 
         // Save receptionist
         receptionist = receptionistRepository.save(receptionist);
@@ -99,8 +93,7 @@ public class ReceptionistService {
                     user.getFullName(),
                     user.getUsername(),
                     request.getPassword(), // Temporary password
-                    receptionist.getEmployeeId(),
-                    receptionist.getShift(),
+                    receptionist.getShift().toString(),
                     receptionist.getDeskNumber()
             );
         } catch (Exception e) {
@@ -123,13 +116,7 @@ public class ReceptionistService {
                 .collect(Collectors.toList());
     }
 
-    public List<ReceptionistResponse> getOnDutyReceptionists() {
-        return receptionistRepository.findByIsOnDutyTrue().stream()
-                .map(receptionist -> convertToResponse(receptionist, null))
-                .collect(Collectors.toList());
-    }
-
-    public List<ReceptionistResponse> getReceptionistsByShift(String shift) {
+    public List<ReceptionistResponse> getReceptionistsByShift(Receptionist.Shift shift) {
         return receptionistRepository.findByShift(shift).stream()
                 .map(receptionist -> convertToResponse(receptionist, null))
                 .collect(Collectors.toList());
@@ -165,6 +152,7 @@ public class ReceptionistService {
 
         user.setFullName(request.getFullName().trim());
         user.setIsActive(request.getIsActive());
+        user.setGender(User.Gender.valueOf(request.getGender()));
 
         // Update password if provided
         if (request.getPassword() != null && !request.getPassword().isEmpty()) {
@@ -177,13 +165,6 @@ public class ReceptionistService {
 
         userRepository.save(user);
 
-        // Update receptionist information
-        if (!receptionist.getEmployeeId().equals(request.getEmployeeId())) {
-            if (receptionistRepository.existsByEmployeeId(request.getEmployeeId())) {
-                throw new RuntimeException("Employee ID already exists");
-            }
-            receptionist.setEmployeeId(request.getEmployeeId());
-        }
 
         receptionist.setShift(request.getShift());
         receptionist.setDeskNumber(request.getDeskNumber());
@@ -191,17 +172,6 @@ public class ReceptionistService {
         receptionist = receptionistRepository.save(receptionist);
 
         return convertToResponse(receptionist, "Receptionist updated successfully");
-    }
-
-    @Transactional
-    public ReceptionistResponse updateDutyStatus(Long id, Boolean isOnDuty) {
-        Receptionist receptionist = receptionistRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Receptionist not found"));
-
-        receptionist.setIsOnDuty(isOnDuty);
-        receptionist = receptionistRepository.save(receptionist);
-
-        return convertToResponse(receptionist, "Duty status updated successfully");
     }
 
     @Transactional
@@ -224,11 +194,10 @@ public class ReceptionistService {
         response.setFullName(receptionist.getUser().getFullName());
         response.setEmail(receptionist.getUser().getEmail());
         response.setPhone(receptionist.getUser().getPhone());
-        response.setEmployeeId(receptionist.getEmployeeId());
+        response.setGender(receptionist.getUser().getGender());
         response.setShift(receptionist.getShift());
         response.setDeskNumber(receptionist.getDeskNumber());
         response.setJoinedDate(receptionist.getJoinedDate());
-        response.setIsOnDuty(receptionist.getIsOnDuty());
         response.setIsActive(receptionist.getUser().getIsActive());
         response.setManagedAppointmentsCount(
                 receptionist.getManagedAppointments() != null ?

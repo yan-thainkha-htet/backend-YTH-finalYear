@@ -12,13 +12,7 @@ public interface ReceptionistRepository extends JpaRepository<Receptionist, Long
 
     Optional<Receptionist> findByUserId(Long userId);
 
-    Optional<Receptionist> findByEmployeeId(String employeeId);
-
-    Boolean existsByEmployeeId(String employeeId);
-
-    List<Receptionist> findByShift(String shift);
-
-    List<Receptionist> findByIsOnDutyTrue();
+    List<Receptionist> findByShift(Receptionist.Shift shift);
 
     List<Receptionist> findByUser_IsActiveTrue();
 }

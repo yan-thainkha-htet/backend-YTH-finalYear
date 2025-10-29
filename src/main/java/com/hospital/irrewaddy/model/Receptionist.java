@@ -13,26 +13,24 @@ public class Receptionist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long id;
-
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @Column(name = "employee_id", unique = true, length = 50)
-    private String employeeId;
-
+    @Enumerated(EnumType.STRING)  // ← Store as string in DB
     @Column(name = "shift", length = 20)
-    private String shift; // MORNING, AFTERNOON, EVENING, NIGHT
-
+    private Shift shift; // MORNING, AFTERNOON, EVENING, NIGHT
     @Column(name = "desk_number")
     private Integer deskNumber;
-
+    public enum Shift {
+        MORNING,
+        AFTERNOON,
+        EVENING,
+        NIGHT
+    }
     @CreationTimestamp
     @Column(name = "joined_date")
     private LocalDateTime joinedDate;
-
-    @Column(name = "is_on_duty")
-    private Boolean isOnDuty = true;
 
     // Relationships
     @OneToMany(mappedBy = "receptionist")
@@ -59,19 +57,11 @@ public class Receptionist {
         this.user = user;
     }
 
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public String getShift() {
+    public Shift getShift() {
         return shift;
     }
 
-    public void setShift(String shift) {
+    public void setShift(Shift shift) {
         this.shift = shift;
     }
 
@@ -90,15 +80,6 @@ public class Receptionist {
     public void setJoinedDate(LocalDateTime joinedDate) {
         this.joinedDate = joinedDate;
     }
-
-    public Boolean getIsOnDuty() {
-        return isOnDuty;
-    }
-
-    public void setIsOnDuty(Boolean isOnDuty) {
-        this.isOnDuty = isOnDuty;
-    }
-
     public List<Appointment> getManagedAppointments() {
         return managedAppointments;
     }

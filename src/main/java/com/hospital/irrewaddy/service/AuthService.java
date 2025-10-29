@@ -100,6 +100,7 @@ public class AuthService {
         user.setEmail(request.getEmail().trim().toLowerCase());
         user.setPhone(request.getPhone().trim());
         user.setFullName(request.getFullName());
+        user.setGender(request.getGender());
         user.setRole(User.UserRole.PATIENT); // Auto-assign PATIENT role
         user.setIsActive(true);
         user.setMustChangePassword(false); // Self-registered users don't need to change password
@@ -112,7 +113,6 @@ public class AuthService {
         Patient patient = new Patient();
         patient.setUser(user);
         patient.setDateOfBirth(request.getDateOfBirth());
-        patient.setGender(request.getGender());
         patient.setAddress(request.getAddress());
         // Other patient fields can be null initially and filled later
 

@@ -670,8 +670,7 @@ public class EmailService {
     /**
      * Send welcome email to newly created receptionist
      */
-    public void sendReceptionistWelcomeEmail(String to, String fullName, String username, String tempPassword,
-                                             String employeeId, String shift, Integer deskNumber) {
+    public void sendReceptionistWelcomeEmail(String to, String fullName, String username, String tempPassword, String shift, Integer deskNumber) {
         String subject = "Welcome to IRREWADDY Hospital - Receptionist Account Created";
 
         String htmlContent = """
@@ -822,7 +821,7 @@ public class EmailService {
                 </div>
             </body>
             </html>
-            """.formatted(fullName, employeeId, shift,
+            """.formatted(fullName, shift,
                 deskNumber != null ? "Desk " + deskNumber : "Not assigned",
                 username, to, tempPassword);
 
@@ -843,7 +842,7 @@ public class EmailService {
                             "Temporary Password: %s\n\n" +
                             "IMPORTANT: You must change your password on first login.\n\n" +
                             "Best regards,\nIRREWADDY Hospital Team",
-                    fullName, employeeId, shift,
+                    fullName, shift,
                     deskNumber != null ? "Desk " + deskNumber : "Not assigned",
                     username, to, tempPassword
             );

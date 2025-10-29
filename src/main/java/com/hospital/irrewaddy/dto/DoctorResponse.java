@@ -1,5 +1,7 @@
 package com.hospital.irrewaddy.dto;
 
+import com.hospital.irrewaddy.model.User;
+
 import java.math.BigDecimal;
 
 public class DoctorResponse {
@@ -9,6 +11,7 @@ public class DoctorResponse {
     private String fullName;
     private String email;
     private String phone;
+    private User.Gender gender;
     private String specialization;
     private String qualification;
     private Integer experienceYears;
@@ -24,7 +27,7 @@ public class DoctorResponse {
     }
 
     public DoctorResponse(Long id, Long userId, String username, String fullName, String email,
-                          String phone, String specialization, String qualification,
+                          String phone, User.Gender gender, String specialization, String qualification,
                           Integer experienceYears, String bio,
                           Float rating, Integer totalPatients, String departmentName,
                           Boolean isActive, String message) {
@@ -34,6 +37,7 @@ public class DoctorResponse {
         this.fullName = fullName;
         this.email = email;
         this.phone = phone;
+        this.gender = gender;
         this.specialization = specialization;
         this.qualification = qualification;
         this.experienceYears = experienceYears;
@@ -92,6 +96,12 @@ public class DoctorResponse {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public User.Gender getGender(){ return gender; }
+
+    public void setGender(User.Gender gender) {
+        this.gender = gender;
     }
 
     public String getSpecialization() {

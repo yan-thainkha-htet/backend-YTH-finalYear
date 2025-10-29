@@ -1,5 +1,6 @@
 package com.hospital.irrewaddy.dto;
 
+import com.hospital.irrewaddy.model.User;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
@@ -20,7 +21,7 @@ public class CreateDoctorRequest {
     @Pattern(regexp = "^[0-9]{10,15}$", message = "Phone number must be between 10 and 15 digits")
     private String phone;
 
-    private String gender; // Optional
+    private User.Gender gender;
 
     // Professional Information
     @NotBlank(message = "Specialization is required")
@@ -82,11 +83,11 @@ public class CreateDoctorRequest {
         this.phone = phone;
     }
 
-    public String getGender() {
+    public User.Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(User.Gender gender) {
         this.gender = gender;
     }
 

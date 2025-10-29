@@ -2,7 +2,9 @@ package com.hospital.irrewaddy.service;
 
 import com.hospital.irrewaddy.dto.AdminResponse;
 import com.hospital.irrewaddy.dto.CreateAdminRequest;
+import com.hospital.irrewaddy.model.Admin;
 import com.hospital.irrewaddy.model.User;
+import com.hospital.irrewaddy.repository.AdminRepository;
 import com.hospital.irrewaddy.repository.UserRepository;
 import com.hospital.irrewaddy.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ public class AdminService {
 
     @Autowired
     private UserRepository userRepository;
+
+    private AdminRepository adminRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -59,23 +63,27 @@ public class AdminService {
         }
 
         // Create admin user
-        User admin = new User();
-        admin.setUsername(request.getUsername().trim().toLowerCase());
-        admin.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        admin.setEmail(request.getEmail().trim().toLowerCase());
-        admin.setPhone(request.getPhone().trim());
-        admin.setFullName(request.getFullName().trim());
-        admin.setRole(User.UserRole.ADMIN);
-        admin.setIsActive(request.getIsActive());
-        admin.setMustChangePassword(true);
+        User user = new User();
+        user.setUsername(request.getUsername().trim().toLowerCase());
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        user.setEmail(request.getEmail().trim().toLowerCase());
+        user.setPhone(request.getPhone().trim());
+        user.setGender(User.Gender.valueOf(request.getGender()));
+        user.setFullName(request.getFullName().trim());
+        user.setRole(User.UserRole.ADMIN);
+        user.setIsActive(request.getIsActive());
+        user.setMustChangePassword(true);
+        user = userRepository.save(user);
 
-        admin = userRepository.save(admin);
+        Admin admin = new Admin();
+        admin.setUser(user);
+        admin = adminRepository.save(admin);
 
         try {
             emailService.sendAdminWelcomeEmail(
-                    admin.getEmail(),
-                    admin.getFullName(),
-                    admin.getUsername(),
+                    user.getEmail(),
+                    user.getFullName(),
+                    user.getUsername(),
                     request.getPassword() // Temporary password
             );
         } catch (Exception e) {
@@ -83,7 +91,7 @@ public class AdminService {
             // Continue anyway - admin was created successfully
         }
 
-        return convertToResponse(admin, "Admin created successfully");
+        return convertToResponse(user, "Admin created successfully");
     }
 
     public List<AdminResponse> getAllAdmins() {
@@ -208,6 +216,7 @@ public class AdminService {
         response.setUsername(admin.getUsername());
         response.setEmail(admin.getEmail());
         response.setPhone(admin.getPhone());
+        response.setGender(admin.getGender());
         response.setFullName(admin.getFullName());
         response.setRole(admin.getRole().toString());
         response.setIsActive(admin.getIsActive());

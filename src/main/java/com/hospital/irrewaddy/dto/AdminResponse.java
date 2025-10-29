@@ -1,5 +1,7 @@
 package com.hospital.irrewaddy.dto;
 
+import com.hospital.irrewaddy.model.User;
+
 import java.time.LocalDateTime;
 
 public class AdminResponse {
@@ -8,6 +10,8 @@ public class AdminResponse {
     private String email;
     private String phone;
     private String fullName;
+
+    private User.Gender gender;
     private String role;
     private Boolean isActive;
     private LocalDateTime createdAt;
@@ -48,6 +52,12 @@ public class AdminResponse {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public User.Gender getGender() { return gender; }
+
+    public void setGender(User.Gender gender) {
+        this.gender = gender;
     }
 
     public String getFullName() {

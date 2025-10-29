@@ -1,5 +1,7 @@
 package com.hospital.irrewaddy.dto;
 
+import com.hospital.irrewaddy.model.Receptionist;
+import com.hospital.irrewaddy.model.User;
 import jakarta.validation.constraints.*;
 
 public class CreateReceptionistRequest {
@@ -16,13 +18,10 @@ public class CreateReceptionistRequest {
     @Pattern(regexp = "^[0-9]{10,15}$", message = "Phone number must be between 10 and 15 digits")
     private String phone;
 
+    @NotNull(message = "Gender is required")
     private String gender;
-
-    @NotBlank(message = "Employee ID is required")
-    @Size(max = 50, message = "Employee ID must not exceed 50 characters")
-    private String employeeId;
-
-    private String shift; // MORNING, AFTERNOON, EVENING, NIGHT
+    @NotNull(message = "Shift is required")
+    private Receptionist.Shift shift;
 
     private Integer deskNumber;
 
@@ -74,19 +73,11 @@ public class CreateReceptionistRequest {
         this.gender = gender;
     }
 
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public String getShift() {
+    public Receptionist.Shift getShift() {
         return shift;
     }
 
-    public void setShift(String shift) {
+    public void setShift(Receptionist.Shift shift) {
         this.shift = shift;
     }
 

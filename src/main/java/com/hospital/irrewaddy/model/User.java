@@ -58,6 +58,14 @@ public class User {
     @Column(name = "otp_attempts")
     private Integer otpAttempts = 0;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", length = 10)
+    private Gender gender;
+    // Enum for Gender
+    public enum Gender {
+        MALE, FEMALE, OTHER
+    }
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -83,6 +91,9 @@ public class User {
         PATIENT,
         DOCTOR,
         RECEPTIONIST,
+
+        SUPER_ADMIN,
+
         ADMIN
     }
 
@@ -145,6 +156,14 @@ public class User {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
+
+    public Gender getGender() {
+        return gender;
+    }
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
 
     public UserRole getRole() {
         return role;

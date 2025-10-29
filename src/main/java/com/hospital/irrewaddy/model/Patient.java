@@ -16,16 +16,9 @@ public class Patient {
     private User user;
     @Column(name = "date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
-    @Enumerated(EnumType.STRING)
-    @Column(name = "gender", length = 10)
-    private Gender gender;
+
     @Column(name = "address", columnDefinition = "TEXT")
     private String address;
-
-    // Enum for Gender
-    public enum Gender {
-        MALE, FEMALE, OTHER
-    }
 
     //Relationships
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
@@ -33,13 +26,12 @@ public class Patient {
 
     public Patient() {
     }
-    public Patient(Long id, User user, LocalDate dateOfBirth, Gender gender, String bloodGroup,
+    public Patient(Long id, User user, LocalDate dateOfBirth, String bloodGroup,
                    String address, String emergencyContactName, String emergencyContactPhone,
                    String allergies, String medicalHistory) {
         this.id = id;
         this.user = user;
         this.dateOfBirth = dateOfBirth;
-        this.gender = gender;
         this.address = address;
     }
 
@@ -68,13 +60,6 @@ public class Patient {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
 
     public String getAddress() {
         return address;
