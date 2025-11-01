@@ -11,68 +11,41 @@ public class Patient {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     private Long id;
+    public String bloodGroup;
+
+    //Relationships
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
-    @Column(name = "date_of_birth", nullable = false)
-    private LocalDate dateOfBirth;
-
-    @Column(name = "address", columnDefinition = "TEXT")
-    private String address;
-
-    //Relationships
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
     private List<Appointment> appointments;
 
     public Patient() {
     }
-    public Patient(Long id, User user, LocalDate dateOfBirth, String bloodGroup,
-                   String address, String emergencyContactName, String emergencyContactPhone,
+    public Patient(Long id, User user, String bloodGroup,
+                   String emergencyContactName, String emergencyContactPhone,
                    String allergies, String medicalHistory) {
         this.id = id;
+        this.bloodGroup = bloodGroup;
         this.user = user;
-        this.dateOfBirth = dateOfBirth;
-        this.address = address;
     }
 
     // Getters and Setters
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
+    public String getBloodGroup() { return bloodGroup; }
+    public void setBloodGroup(String bloodGroup) { this.bloodGroup = bloodGroup; }
     public User getUser() {
         return user;
     }
-
     public void setUser(User user) {
         this.user = user;
     }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public List<Appointment> getAppointments() {
-        return appointments;
-    }
-
+    public List<Appointment> getAppointments() { return appointments; }
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }

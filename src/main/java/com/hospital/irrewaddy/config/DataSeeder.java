@@ -37,13 +37,13 @@ public class DataSeeder implements CommandLineRunner {
         if (!userRepository.existsByRole(User.UserRole.SUPER_ADMIN)) {
             User user = new User();
             user.setFullName("Super Admin");
-            user.setUsername("admin@irrewaddy");
-            user.setPasswordHash(passwordEncoder.encode("Admin@123"));
-            user.setPhone("09294285689");
-            user.setEmail("admin@irrewaddy.com");
+            user.setUsername("superadmin@hospital");
+            user.setPasswordHash(passwordEncoder.encode("Superadmin@123"));
             user.setRole(User.UserRole.SUPER_ADMIN);
             user.setIsActive(true);
-            user.setMustChangePassword(true); // ← Force password change
+            user.setMustChangePassword(true);
+            user.setIsProfileCompleted(false);
+            user.setIsEmailVerified(false);// ← Force password change
             userRepository.save(user);
 
             Admin admin = new Admin();

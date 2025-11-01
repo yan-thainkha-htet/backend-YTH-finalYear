@@ -59,6 +59,40 @@ public class EmailService {
         }
     }
 
+    public void sendOTPEmail(String toEmail, String otpCode) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(toEmail);
+            helper.setSubject("Email Verification - IRREWADDY Hospital");
+
+            String htmlContent = String.format("""
+            <html>
+            <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+                    <h2 style="color: #9333ea;">Email Verification</h2>
+                    <p>Your OTP code for email verification is:</p>
+                    <div style="background-color: #f3e8ff; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; border-radius: 5px; margin: 20px 0;">
+                        %s
+                    </div>
+                    <p>This OTP will expire in 10 minutes.</p>
+                    <p>If you didn't request this verification, please ignore this email.</p>
+                    <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+                    <p style="font-size: 12px; color: #666;">IRREWADDY Hospital Team</p>
+                </div>
+            </body>
+            </html>
+            """, otpCode);
+
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to send OTP email: " + e.getMessage());
+        }
+    }
+
     public void sendPasswordResetOtp(String to, String fullName, String otp, int expiryMinutes) {
         String subject = "Password Reset OTP - IRREWADDY Hospital";
 

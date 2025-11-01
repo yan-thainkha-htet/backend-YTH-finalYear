@@ -95,6 +95,10 @@ public class SecurityConfig {
                         .requestMatchers("/hospital/api/appointments").hasAnyRole("PATIENT", "ADMIN")
                         .requestMatchers("/hospital/api/appointments/**").authenticated()
 
+                        // Super Admin routes
+                        .requestMatchers("/hospital/api/superadmin/setup/**").authenticated()
+                        .requestMatchers("/hospital/api/superadmin/**").hasRole("SUPER_ADMIN")
+
                         // Admin routes
                         .requestMatchers("/hospital/api/admin/**").hasRole("ADMIN")
 

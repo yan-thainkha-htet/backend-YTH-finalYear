@@ -89,8 +89,6 @@ public class DoctorService {
         doctor.setQualification(request.getQualification());
         doctor.setExperienceYears(request.getExperienceYears());
         doctor.setBio(request.getBio());
-        doctor.setTotalPatients(0);
-
 
         // Set department if provided
         if (request.getDepartmentId() != null) {
@@ -213,7 +211,6 @@ public class DoctorService {
         response.setQualification(doctor.getQualification());
         response.setExperienceYears(doctor.getExperienceYears());
         response.setBio(doctor.getBio());
-        response.setTotalPatients(doctor.getTotalPatients());
         response.setDepartmentName(doctor.getDepartment() != null ? doctor.getDepartment().getName() : null);
         response.setIsActive(doctor.getUser().getIsActive());
         response.setMessage(message);

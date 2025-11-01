@@ -1,7 +1,6 @@
 package com.hospital.irrewaddy.service;
 
 import com.hospital.irrewaddy.dto.*;
-import com.hospital.irrewaddy.model.Patient;
 import com.hospital.irrewaddy.model.User;
 import com.hospital.irrewaddy.repository.PatientRepository;
 import com.hospital.irrewaddy.repository.UserRepository;
@@ -47,90 +46,92 @@ public class AuthService {
     @Value("${app.otp.length:6}")
     private int otpLength;
 
-    @Transactional
-    public AuthResponse register(RegisterRequest request) {
-        // Validate password confirmation
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            throw new RuntimeException("Passwords do not match");
-        }
-
-        // Generate username from email
-        String username = request.generateUsername();
-
-        // Check username uniqueness
-        if (userRepository.existsByUsername(username)) {
-            // If username exists, append a number
-            int counter = 1;
-            while (userRepository.existsByUsername(username + counter)) {
-                counter++;
-            }
-            username = username + counter;
-        }
-
-        // Check email uniqueness
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
-        }
-
-        // Check phone uniqueness
-        if (userRepository.existsByPhone(request.getPhone())) {
-            throw new RuntimeException("Phone number already exists");
-        }
-
-        // Validate email format
-        if (!ValidationUtil.isValidEmail(request.getEmail())) {
-            throw new RuntimeException("Invalid email format");
-        }
-
-        // Validate phone format
-        if (!ValidationUtil.isValidPhone(request.getPhone())) {
-            throw new RuntimeException("Invalid phone number format");
-        }
-
-        // Validate password strength
-        String passwordError = ValidationUtil.validatePassword(request.getPassword());
-        if (passwordError != null) {
-            throw new RuntimeException(passwordError);
-        }
-
-        // Create User entity
-        User user = new User();
-        user.setUsername(username);
-        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        user.setEmail(request.getEmail().trim().toLowerCase());
-        user.setPhone(request.getPhone().trim());
-        user.setFullName(request.getFullName());
-        user.setGender(request.getGender());
-        user.setRole(User.UserRole.PATIENT); // Auto-assign PATIENT role
-        user.setIsActive(true);
-        user.setMustChangePassword(false); // Self-registered users don't need to change password
-        user.setLastPasswordChange(LocalDateTime.now()); // Set initial password change time
-
-        // Save user first
-        user = userRepository.save(user);
-
-        // Create Patient entity with additional information
-        Patient patient = new Patient();
-        patient.setUser(user);
-        patient.setDateOfBirth(request.getDateOfBirth());
-        patient.setAddress(request.getAddress());
-        // Other patient fields can be null initially and filled later
-
-        // Save patient
-        patientRepository.save(patient);
-
-        // Generate token
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
-
-        return new AuthResponse(
-                token,
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole(),
-                user.getMustChangePassword(), // Add this field
-                "Registration successful"
-        );
-    }
+//    @Transactional
+//    public AuthResponse register(RegisterRequest request) {
+//        // Validate password confirmation
+//        if (!request.getPassword().equals(request.getConfirmPassword())) {
+//            throw new RuntimeException("Passwords do not match");
+//        }
+//
+//        // Generate username from email
+//        String username = request.generateUsername();
+//
+//        // Check username uniqueness
+//        if (userRepository.existsByUsername(username)) {
+//            // If username exists, append a number
+//            int counter = 1;
+//            while (userRepository.existsByUsername(username + counter)) {
+//                counter++;
+//            }
+//            username = username + counter;
+//        }
+//
+//        // Check email uniqueness
+//        if (userRepository.existsByEmail(request.getEmail())) {
+//            throw new RuntimeException("Email already exists");
+//        }
+//
+//        // Check phone uniqueness
+//        if (userRepository.existsByPhone(request.getPhone())) {
+//            throw new RuntimeException("Phone number already exists");
+//        }
+//
+//        // Validate email format
+//        if (!ValidationUtil.isValidEmail(request.getEmail())) {
+//            throw new RuntimeException("Invalid email format");
+//        }
+//
+//        // Validate phone format
+//        if (!ValidationUtil.isValidPhone(request.getPhone())) {
+//            throw new RuntimeException("Invalid phone number format");
+//        }
+//
+//        // Validate password strength
+//        String passwordError = ValidationUtil.validatePassword(request.getPassword());
+//        if (passwordError != null) {
+//            throw new RuntimeException(passwordError);
+//        }
+//
+//        // Create User entity
+//        User user = new User();
+//        user.setFullName(request.getFullName());
+//        user.setUsername(username);
+//        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+//        user.setEmail(request.getEmail().trim().toLowerCase());
+//        user.setPhone(request.getPhone().trim());
+//        user.setGender(request.getGender());
+//        user.setRole(User.UserRole.PATIENT);
+//        // Auto-assign PATIENT role
+//        user.setIsActive(true);
+//        user.setDateOfBirth(request.getDateOfBirth());
+//        user.setAddress(request.getAddress());
+//        user.setMustChangePassword(true);
+//
+//
+//        // Save user first
+//        user = userRepository.save(user);
+//
+//        // Create Patient entity with additional information
+//        Patient patient = new Patient();
+//        patient.setUser(user);
+//
+//
+//
+//        // Save patient
+//        patientRepository.save(patient);
+//
+//        // Generate token
+//        String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+//
+//        return new AuthResponse(
+//                token,
+//                user.getUsername(),
+//                user.getEmail(),
+//                user.getRole(),
+//                user.getMustChangePassword(), // Add this field
+//                "Registration successful"
+//        );
+//    }
 
     public AuthResponse login(LoginRequest request) {
         try {
@@ -205,7 +206,6 @@ public class AuthService {
         // Update password
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         user.setMustChangePassword(false); // Clear the flag
-        user.setLastPasswordChange(LocalDateTime.now()); // Update timestamp
         userRepository.save(user);
 
         return "Password changed successfully";
@@ -249,7 +249,7 @@ public class AuthService {
         return "OTP sent to your email. It will expire in " + otpExpiryMinutes + " minutes.";
     }
 
-    public String verifyOtp(VerifyOtpRequest request) {
+    public String verifyOtp(VerifyOTPRequest request) {
         // Find user by email
         User user = userRepository.findByEmail(request.getEmail().trim().toLowerCase())
                 .orElseThrow(() -> new RuntimeException("Invalid email or OTP"));
@@ -265,7 +265,7 @@ public class AuthService {
         }
 
         // Verify OTP
-        if (!passwordEncoder.matches(request.getOtp(), user.getPasswordResetOtp())) {
+        if (!passwordEncoder.matches(request.getOtpCode(), user.getPasswordResetOtp())) {
             throw new RuntimeException("Invalid OTP");
         }
 
@@ -314,7 +314,6 @@ public class AuthService {
         user.setPasswordResetOtp(null); // Clear OTP
         user.setOtpExpiry(null);
         user.setOtpAttempts(0);
-        user.setLastPasswordChange(LocalDateTime.now());
         user.setMustChangePassword(false); // Clear force change flag if it was set
         userRepository.save(user);
 

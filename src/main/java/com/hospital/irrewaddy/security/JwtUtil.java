@@ -32,6 +32,20 @@ public class JwtUtil {
         return extractClaim(token, Claims::getSubject);
     }
 
+    // ⭐ NEW: Extract userId from token
+    public Long extractUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        Object userId = claims.get("userId");
+
+        if (userId instanceof Integer) {
+            return ((Integer) userId).longValue();
+        } else if (userId instanceof Long) {
+            return (Long) userId;
+        }
+
+        return null;
+    }
+
     // Extract expiration date from token
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
@@ -57,11 +71,31 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    // Generate token
+    // ⭐ UPDATED: Generate token with userId
+    public String generateToken(String username, String role, Long userId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);
+        claims.put("userId", userId); // Add userId to claims
+        return createToken(claims, username);
+    }
+
+    // Legacy method for backward compatibility
     public String generateToken(String username, String role) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
         return createToken(claims, username);
+    }
+
+    // ⭐ NEW: Generate token from CustomUserDetails
+    public String generateToken(CustomUserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userDetails.getId());
+        claims.put("role", userDetails.getRoleAsString());
+        claims.put("isProfileCompleted", userDetails.isProfileCompleted());
+        claims.put("isEmailVerified", userDetails.isEmailVerified());
+
+        // Use email as subject for consistency
+        return createToken(claims, userDetails.getUsername());
     }
 
     // Create token
@@ -79,5 +113,18 @@ public class JwtUtil {
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    // Validate token without UserDetails
+    public Boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token);
+            return !isTokenExpired(token);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
