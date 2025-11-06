@@ -40,7 +40,7 @@ public class SuperAdminService {
      * Step 1: Complete profile information
      */
     @Transactional
-    public ApiResponse completeProfile(Long userId, CompleteProfileRequest request) {
+    public ApiResponse completeProfile(Long userId, SuperAdminCompleteProfileRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -112,6 +112,7 @@ public class SuperAdminService {
     /**
      * Step 2: Send OTP to email
      */
+    @Transactional
     public ApiResponse sendEmailOTP(String email) {
         // Generate 6-digit OTP
         String otpCode = String.format("%06d", new Random().nextInt(999999));

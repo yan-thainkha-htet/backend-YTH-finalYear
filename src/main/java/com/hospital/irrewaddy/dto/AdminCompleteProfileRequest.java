@@ -1,8 +1,7 @@
 package com.hospital.irrewaddy.dto;
 
 import jakarta.validation.constraints.*;
-
-public class CompleteProfileRequest {
+public class AdminCompleteProfileRequest {
 
     @NotBlank(message = "Full name is required")
     @Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters")
@@ -11,10 +10,6 @@ public class CompleteProfileRequest {
     @NotBlank(message = "Gender is required")
     @Pattern(regexp = "MALE|FEMALE|OTHER", message = "Gender must be MALE, FEMALE, or OTHER")
     private String gender;
-
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
-    private String email;
 
     @NotBlank(message = "Username is required")
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
@@ -39,14 +34,6 @@ public class CompleteProfileRequest {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getUsername() {

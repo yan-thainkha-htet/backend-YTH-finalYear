@@ -3,38 +3,48 @@ package com.hospital.irrewaddy.controller;
 import com.hospital.irrewaddy.dto.*;
 import com.hospital.irrewaddy.security.CustomUserDetails;
 import com.hospital.irrewaddy.security.JwtUtil;
-import com.hospital.irrewaddy.service.SuperAdminService;
+import com.hospital.irrewaddy.service.AdminService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/hospital/api/superadmin/setup")
-public class SuperAdminSetupController {
+@RequestMapping("/hospital/api/admin/setup")
+@RequiredArgsConstructor
+@Slf4j
+@CrossOrigin(origins = "*")
+public class AdminSetupController {
 
     @Autowired
-    private SuperAdminService superAdminService;
+    private AdminService adminService;
 
     @Autowired
     private JwtUtil jwtUtil;
 
-    /**
-     * Step 1: Complete profile
-     */
+
     @PostMapping("/complete-profile")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> completeProfile(
-            @Valid @RequestBody SuperAdminCompleteProfileRequest request,
+            @Valid @RequestBody AdminCompleteProfileRequest request,
             Authentication authentication,
             HttpServletRequest httpRequest) {
 
+        System.out.println("=== DEBUG ===");
+        System.out.println("User: " + authentication.getName());
+        System.out.println("Authorities: " + authentication.getAuthorities());
+        System.out.println("Principal: " + authentication.getPrincipal());
+
         try {
             Long userId = extractUserIdFromAuth(authentication, httpRequest);
-            ApiResponse response = superAdminService.completeProfile(userId, request);
+            ApiResponse response = adminService.completeProfile(userId, request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             ApiResponse errorResponse = new ApiResponse();
@@ -48,10 +58,11 @@ public class SuperAdminSetupController {
      * Step 2: Resend OTP
      */
     @PostMapping("/resend-otp")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> resendOTP(
             @RequestParam String email) {
 
-        ApiResponse response = superAdminService.sendEmailOTP(email);
+        ApiResponse response = adminService.sendEmailOTP(email);
         return ResponseEntity.ok(response);
     }
 
@@ -59,6 +70,7 @@ public class SuperAdminSetupController {
      * Step 3: Verify OTP
      */
     @PostMapping("/verify-otp")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> verifyOTP(
             @Valid @RequestBody VerifyOTPRequest request,
             Authentication authentication,
@@ -66,7 +78,7 @@ public class SuperAdminSetupController {
 
         try {
             Long userId = extractUserIdFromAuth(authentication, httpRequest);
-            ApiResponse response = superAdminService.verifyEmailOTP(userId, request);
+            ApiResponse response = adminService.verifyEmailOTP(userId, request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             ApiResponse errorResponse = new ApiResponse();
@@ -80,6 +92,7 @@ public class SuperAdminSetupController {
      * Step 4: Update password
      */
     @PostMapping("/update-password")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> updatePassword(
             @Valid @RequestBody UpdatePasswordRequest request,
             Authentication authentication,
@@ -87,7 +100,7 @@ public class SuperAdminSetupController {
 
         try {
             Long userId = extractUserIdFromAuth(authentication, httpRequest);
-            ApiResponse response = superAdminService.updatePassword(userId, request);
+            ApiResponse response = adminService.updatePassword(userId, request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             ApiResponse errorResponse = new ApiResponse();
@@ -107,7 +120,7 @@ public class SuperAdminSetupController {
 
         try {
             Long userId = extractUserIdFromAuth(authentication, httpRequest);
-            ApiResponse response = superAdminService.checkSetupStatus(userId);
+            ApiResponse response = adminService.checkSetupStatus(userId);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             ApiResponse errorResponse = new ApiResponse();

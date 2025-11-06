@@ -3,6 +3,7 @@ package com.hospital.irrewaddy.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -53,30 +54,57 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // Use allowedOriginPatterns instead of allowedOrigins when credentials = true
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+
+        // Allow all HTTP methods including OPTIONS
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
+        // Allow all headers
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(false);
+
+        // Allow credentials (required for JWT tokens)
+        configuration.setAllowCredentials(true);
+
+        // Expose Authorization header so frontend can read it
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
+        // Cache preflight response for 1 hour
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                //.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // ENABLE CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // CRITICAL: Allow all OPTIONS requests (CORS preflight)
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // Error endpoint
                         .requestMatchers("/error").permitAll()
+
+                        // Auth endpoints - PUBLIC ACCESS
                         .requestMatchers(
-                                "/hospital/api/auth/**",
+                                "/hospital/api/auth/login",
+                                "/hospital/api/auth/register",
                                 "/hospital/api/auth/forgot-password",
                                 "/hospital/api/auth/verify-otp",
                                 "/hospital/api/auth/reset-password",
-                                "/hospital/api/auth/resend-otp"
+                                "/hospital/api/auth/resend-otp",
+                                "/hospital/api/auth/send-otp"  // Added for admin setup
                         ).permitAll()
+
+                        // Auth endpoints that require authentication
                         .requestMatchers("/hospital/api/auth/change-password").authenticated()
+
                         // Departments
                         .requestMatchers("/hospital/api/departments", "/hospital/api/departments/active").permitAll()
                         .requestMatchers("/hospital/api/departments/{id}", "/hospital/api/departments/name/{name}").permitAll()
@@ -95,11 +123,15 @@ public class SecurityConfig {
                         .requestMatchers("/hospital/api/appointments").hasAnyRole("PATIENT", "ADMIN")
                         .requestMatchers("/hospital/api/appointments/**").authenticated()
 
-                        // Super Admin routes
-                        .requestMatchers("/hospital/api/superadmin/setup/**").authenticated()
-                        .requestMatchers("/hospital/api/superadmin/**").hasRole("SUPER_ADMIN")
+                        // ⭐ UPDATED: Super Admin routes
 
-                        // Admin routes
+                        .requestMatchers("/hospital/api/superadmin/**").authenticated()
+
+
+
+                        // ⭐ NEW: Admin setup flow endpoints (must be BEFORE general admin routes)
+                        //.requestMatchers("/hospital/api/admin/complete-profile").hasRole("ADMIN")
+                        //.requestMatchers("/hospital/api/admin/setup-status").hasRole("ADMIN")
                         .requestMatchers("/hospital/api/admin/**").hasRole("ADMIN")
 
                         // Patient routes

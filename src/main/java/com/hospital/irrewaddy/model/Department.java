@@ -123,4 +123,6 @@ public class Department {
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
+
+
 }

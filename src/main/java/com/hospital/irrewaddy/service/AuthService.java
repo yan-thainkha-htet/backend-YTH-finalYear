@@ -154,8 +154,11 @@ public class AuthService {
                     )
             );
 
+            String tokenSubject = (user.getEmail() != null && !user.getEmail().isEmpty())
+                    ? user.getEmail()
+                    : user.getUsername();
             // Generate token
-            String token = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+            String token = jwtUtil.generateToken(tokenSubject, user.getRole().name());
 
             // Create response with must change password flag
             String message = "Login successful";

@@ -360,159 +360,257 @@ public class EmailService {
             """.formatted(fullName);
     }
 
-    public void sendAdminWelcomeEmail(String to, String fullName, String username, String tempPassword) {
+//    public void sendAdminWelcomeEmail(String to, String username, String tempPassword) {
+//        String subject = "Welcome to IRREWADDY Hospital - Admin Account Created";
+//
+//        String htmlContent = """
+//            <!DOCTYPE html>
+//            <html>
+//            <head>
+//                <meta charset="UTF-8">
+//                <style>
+//                    body {
+//                        font-family: Arial, sans-serif;
+//                        line-height: 1.6;
+//                        color: #333;
+//                        margin: 0;
+//                        padding: 0;
+//                        background-color: #f4f4f4;
+//                    }
+//                    .container {
+//                        max-width: 600px;
+//                        margin: 20px auto;
+//                        background: white;
+//                        border-radius: 10px;
+//                        overflow: hidden;
+//                        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+//                    }
+//                    .header {
+//                        background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%);
+//                        color: white;
+//                        padding: 30px;
+//                        text-align: center;
+//                    }
+//                    .content {
+//                        padding: 30px;
+//                    }
+//                    .credentials-box {
+//                        background: #f8f9fa;
+//                        border-left: 4px solid #667eea;
+//                        padding: 20px;
+//                        margin: 20px 0;
+//                        border-radius: 5px;
+//                    }
+//                    .credential-item {
+//                        margin: 10px 0;
+//                        padding: 10px;
+//                        background: white;
+//                        border-radius: 5px;
+//                    }
+//                    .credential-label {
+//                        font-weight: bold;
+//                        color: #666;
+//                        font-size: 12px;
+//                        text-transform: uppercase;
+//                    }
+//                    .credential-value {
+//                        font-size: 16px;
+//                        color: #333;
+//                        font-family: monospace;
+//                        margin-top: 5px;
+//                    }
+//                    .warning {
+//                        background: #fff3cd;
+//                        border-left: 4px solid #ffc107;
+//                        padding: 15px;
+//                        margin: 20px 0;
+//                        border-radius: 5px;
+//                    }
+//                    .button {
+//                        display: inline-block;
+//                        padding: 12px 30px;
+//                        background: #667eea;
+//                        color: white;
+//                        text-decoration: none;
+//                        border-radius: 5px;
+//                        margin: 20px 0;
+//                    }
+//                    .footer {
+//                        text-align: center;
+//                        padding: 20px;
+//                        background: #f9f9f9;
+//                        color: #666;
+//                        font-size: 12px;
+//                    }
+//                    ul {
+//                        padding-left: 20px;
+//                    }
+//                </style>
+//            </head>
+//            <body>
+//                <div class="container">
+//                    <div class="header">
+//                        <h1>🏥 IRREWADDY Hospital</h1>
+//                        <p>Admin Account Created</p>
+//                    </div>
+//                    <div class="content">
+//                        <h2>Welcome, %s!</h2>
+//                        <p>Your administrator account has been successfully created at IRREWADDY Hospital Management System.</p>
+//
+//                        <div class="credentials-box">
+//                            <h3 style="margin-top: 0; color: #667eea;">Your Login Credentials</h3>
+//
+//                            <div class="credential-item">
+//                                <div class="credential-label">Username</div>
+//                                <div class="credential-value">%s</div>
+//                            </div>
+//
+//                            <div class="credential-item">
+//                                <div class="credential-label">Email</div>
+//                                <div class="credential-value">%s</div>
+//                            </div>
+//
+//                            <div class="credential-item">
+//                                <div class="credential-label">Temporary Password</div>
+//                                <div class="credential-value">%s</div>
+//                            </div>
+//                        </div>
+//
+//                        <div class="warning">
+//                            <strong>⚠️ Important Security Notice:</strong>
+//                            <ul style="margin: 10px 0;">
+//                                <li><strong>You must change your password</strong> on first login</li>
+//                                <li>Do not share your credentials with anyone</li>
+//                                <li>Use a strong, unique password</li>
+//                                <li>Keep your login information secure</li>
+//                            </ul>
+//                        </div>
+//
+//                        <p><strong>Your Responsibilities:</strong></p>
+//                        <ul>
+//                            <li>Manage hospital staff and departments</li>
+//                            <li>Oversee system operations</li>
+//                            <li>Handle user accounts and permissions</li>
+//                            <li>Ensure system security and compliance</li>
+//                        </ul>
+//
+//                        <p>If you have any questions or need assistance, please contact the IT department.</p>
+//
+//                        <p>Best regards,<br><strong>IRREWADDY Hospital Team</strong></p>
+//                    </div>
+//                    <div class="footer">
+//                        <p>This is an automated email. Please do not reply.</p>
+//                        <p>&copy; 2025 IRREWADDY Hospital. All rights reserved.</p>
+//                    </div>
+//                </div>
+//            </body>
+//            </html>
+//            """.formatted(username, to, tempPassword);
+//
+//        try {
+//            sendHtmlEmail(to, subject, htmlContent);
+//            System.out.println("✅ Welcome email sent to admin: " + to);
+//        } catch (Exception e) {
+//            System.err.println("❌ Failed to send welcome email to admin: " + e.getMessage());
+//            // Fallback to simple email
+//            String simpleText = String.format(
+//                    "Welcome to IRREWADDY Hospital, %s!\n\n" +
+//                            "Your admin account has been created.\n\n" +
+//                            "Username: %s\n" +
+//                            "Email: %s\n" +
+//                            "Temporary Password: %s\n\n" +
+//                            "IMPORTANT: You must change your password on first login.\n\n" +
+//                            "Best regards,\nIRREWADDY Hospital Team",
+//                    username, to, tempPassword
+//            );
+//            sendSimpleEmail(to, subject, simpleText);
+//        }
+//    }
+
+    public void sendAdminWelcomeEmail(String to, String username, String tempPassword) {
         String subject = "Welcome to IRREWADDY Hospital - Admin Account Created";
 
         String htmlContent = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    body { 
-                        font-family: Arial, sans-serif; 
-                        line-height: 1.6; 
-                        color: #333;
-                        margin: 0;
-                        padding: 0;
-                        background-color: #f4f4f4;
-                    }
-                    .container { 
-                        max-width: 600px; 
-                        margin: 20px auto; 
-                        background: white;
-                        border-radius: 10px;
-                        overflow: hidden;
-                        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-                    }
-                    .header { 
-                        background: linear-gradient(135deg, #667eea 0%%, #764ba2 100%%); 
-                        color: white; 
-                        padding: 30px; 
-                        text-align: center;
-                    }
-                    .content { 
-                        padding: 30px;
-                    }
-                    .credentials-box { 
-                        background: #f8f9fa;
-                        border-left: 4px solid #667eea; 
-                        padding: 20px; 
-                        margin: 20px 0;
-                        border-radius: 5px;
-                    }
-                    .credential-item {
-                        margin: 10px 0;
-                        padding: 10px;
-                        background: white;
-                        border-radius: 5px;
-                    }
-                    .credential-label {
-                        font-weight: bold;
-                        color: #666;
-                        font-size: 12px;
-                        text-transform: uppercase;
-                    }
-                    .credential-value {
-                        font-size: 16px;
-                        color: #333;
-                        font-family: monospace;
-                        margin-top: 5px;
-                    }
-                    .warning { 
-                        background: #fff3cd; 
-                        border-left: 4px solid #ffc107; 
-                        padding: 15px; 
-                        margin: 20px 0;
-                        border-radius: 5px;
-                    }
-                    .button {
-                        display: inline-block;
-                        padding: 12px 30px;
-                        background: #667eea;
-                        color: white;
-                        text-decoration: none;
-                        border-radius: 5px;
-                        margin: 20px 0;
-                    }
-                    .footer { 
-                        text-align: center; 
-                        padding: 20px; 
-                        background: #f9f9f9;
-                        color: #666; 
-                        font-size: 12px;
-                    }
-                    ul {
-                        padding-left: 20px;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h1>🏥 IRREWADDY Hospital</h1>
-                        <p>Admin Account Created</p>
-                    </div>
-                    <div class="content">
-                        <h2>Welcome, %s!</h2>
-                        <p>Your administrator account has been successfully created at IRREWADDY Hospital Management System.</p>
-                        
-                        <div class="credentials-box">
-                            <h3 style="margin-top: 0; color: #667eea;">Your Login Credentials</h3>
-                            
-                            <div class="credential-item">
-                                <div class="credential-label">Username</div>
-                                <div class="credential-value">%s</div>
-                            </div>
-                            
-                            <div class="credential-item">
-                                <div class="credential-label">Email</div>
-                                <div class="credential-value">%s</div>
-                            </div>
-                            
-                            <div class="credential-item">
-                                <div class="credential-label">Temporary Password</div>
-                                <div class="credential-value">%s</div>
-                            </div>
-                        </div>
-                        
-                        <div class="warning">
-                            <strong>⚠️ Important Security Notice:</strong>
-                            <ul style="margin: 10px 0;">
-                                <li><strong>You must change your password</strong> on first login</li>
-                                <li>Do not share your credentials with anyone</li>
-                                <li>Use a strong, unique password</li>
-                                <li>Keep your login information secure</li>
-                            </ul>
-                        </div>
-                        
-                        <p><strong>Your Responsibilities:</strong></p>
-                        <ul>
-                            <li>Manage hospital staff and departments</li>
-                            <li>Oversee system operations</li>
-                            <li>Handle user accounts and permissions</li>
-                            <li>Ensure system security and compliance</li>
-                        </ul>
-                        
-                        <p>If you have any questions or need assistance, please contact the IT department.</p>
-                        
-                        <p>Best regards,<br><strong>IRREWADDY Hospital Team</strong></p>
-                    </div>
-                    <div class="footer">
-                        <p>This is an automated email. Please do not reply.</p>
-                        <p>&copy; 2025 IRREWADDY Hospital. All rights reserved.</p>
-                    </div>
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Welcome Email</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 0;
+                }
+                .email-container {
+                    background-color: #ffffff;
+                    width: 90%%;
+                    max-width: 600px;
+                    margin: 40px auto;
+                    padding: 30px;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                }
+                .header {
+                    text-align: center;
+                    color: #0a5e9a;
+                }
+                .content {
+                    margin-top: 20px;
+                    font-size: 16px;
+                    color: #333;
+                    line-height: 1.6;
+                }
+                .credentials {
+                    background: #f1f9ff;
+                    padding: 15px;
+                    border-radius: 8px;
+                    margin-top: 20px;
+                }
+                .credential-label {
+                    font-weight: bold;
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 30px;
+                    font-size: 14px;
+                    color: #888;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="email-container">
+                <div class="header">
+                    <h2>Welcome, %s!</h2>
+                    <p>Your admin account has been created successfully.</p>
                 </div>
-            </body>
-            </html>
-            """.formatted(fullName, username, to, tempPassword);
+                <div class="content">
+                    <p>Hello <b>%s</b>,</p>
+                    <p>Welcome to <b>IRREWADDY Hospital</b>. Your admin account has been successfully created.</p>
+                    <p>Here are your login credentials:</p>
+
+                    <div class="credentials">
+                        <p><span class="credential-label">Username:</span> %s</p>
+                        <p><span class="credential-label">Email:</span> %s</p>
+                        <p><span class="credential-label">Temporary Password:</span> %s</p>
+                    </div>
+
+                    <p><b>Important:</b> You must change your password upon first login for security reasons.</p>
+                </div>
+                <div class="footer">
+                    <p>© 2025 IRREWADDY Hospital. All rights reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """.formatted(username, username, username, to, tempPassword); // ✅ fixed argument count
 
         try {
             sendHtmlEmail(to, subject, htmlContent);
             System.out.println("✅ Welcome email sent to admin: " + to);
         } catch (Exception e) {
             System.err.println("❌ Failed to send welcome email to admin: " + e.getMessage());
-            // Fallback to simple email
             String simpleText = String.format(
                     "Welcome to IRREWADDY Hospital, %s!\n\n" +
                             "Your admin account has been created.\n\n" +
@@ -521,11 +619,12 @@ public class EmailService {
                             "Temporary Password: %s\n\n" +
                             "IMPORTANT: You must change your password on first login.\n\n" +
                             "Best regards,\nIRREWADDY Hospital Team",
-                    fullName, username, to, tempPassword
+                    username, username, to, tempPassword
             );
             sendSimpleEmail(to, subject, simpleText);
         }
     }
+
 
     public void sendDoctorWelcomeEmail(String to, String fullName, String username, String tempPassword,
                                        String specialization, String department) {

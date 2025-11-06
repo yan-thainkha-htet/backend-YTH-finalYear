@@ -110,20 +110,36 @@ public class JwtUtil {
     }
 
     // Validate token
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-    }
+//    public Boolean validateToken(String token, UserDetails userDetails) {
+//        final String username = extractUsername(token);
+//        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+//    }
+//
+//    // Validate token without UserDetails
+//    public Boolean validateToken(String token) {
+//        try {
+//            Jwts.parserBuilder()
+//                    .setSigningKey(getSigningKey())
+//                    .build()
+//                    .parseClaimsJws(token);
+//            return !isTokenExpired(token);
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
 
-    // Validate token without UserDetails
-    public Boolean validateToken(String token) {
+    public Boolean validateToken(String token, UserDetails userDetails) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(token);
-            return !isTokenExpired(token);
+            final String tokenSubject = extractUsername(token);
+            String userIdentifier = userDetails.getUsername();
+
+            // Compare (case-insensitive for email)
+            boolean subjectMatches = tokenSubject.equalsIgnoreCase(userIdentifier);
+            boolean notExpired = !isTokenExpired(token);
+
+            return subjectMatches && notExpired;
         } catch (Exception e) {
+            //logger.error("Token validation failed: " + e.getMessage());
             return false;
         }
     }

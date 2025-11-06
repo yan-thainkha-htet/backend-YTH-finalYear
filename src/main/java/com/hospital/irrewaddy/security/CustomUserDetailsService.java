@@ -30,4 +30,30 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return new CustomUserDetails(user);
     }
+
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+//        return new CustomUserDetails(user);
+//    }
+
+    /**
+     * ⭐ NEW: Load user by email (used for JWT token validation)
+     */
+    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        return new CustomUserDetails(user);
+    }
+
+    /**
+     * ⭐ NEW: Load user by username OR email (flexible method)
+     */
+    public UserDetails loadUserByUsernameOrEmail(String identifier) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(identifier)
+                .orElseGet(() -> userRepository.findByUsername(identifier)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found: " + identifier)));
+        return new CustomUserDetails(user);
+    }
 }
