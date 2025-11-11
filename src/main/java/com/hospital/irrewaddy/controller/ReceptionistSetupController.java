@@ -1,40 +1,43 @@
 package com.hospital.irrewaddy.controller;
 
 import com.hospital.irrewaddy.dto.*;
-import com.hospital.irrewaddy.security.CustomUserDetails;
 import com.hospital.irrewaddy.security.JwtUtil;
-import com.hospital.irrewaddy.service.SuperAdminService;
+import com.hospital.irrewaddy.service.ReceptionistService;
 import com.hospital.irrewaddy.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/hospital/api/superadmin/setup")
-public class SuperAdminSetupController {
+@RequestMapping("/hospital/api/receptionist/setup")
+@RequiredArgsConstructor
+@Slf4j
+@CrossOrigin(origins = "*")
+public class ReceptionistSetupController {
 
     @Autowired
     private UserService userService;
 
     @Autowired
-    private SuperAdminService superAdminService;
+    private ReceptionistService receptionistService;
 
     @PostMapping("/complete-profile")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('RECEPTIONIST')")
     public ResponseEntity<ApiResponse> completeProfile(
-            @Valid @RequestBody SuperAdminCompleteProfileRequest request,
+            @Valid @RequestBody ReceptionistCompleteProfileRequest request,
             Authentication authentication,
             HttpServletRequest httpRequest) {
 
         try {
             Long userId = userService.extractUserIdFromAuth(authentication, httpRequest);
-            ApiResponse response = superAdminService.completeProfile(userId, request);
+            ApiResponse response = receptionistService.completeProfile(userId, request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             ApiResponse errorResponse = new ApiResponse();
@@ -45,7 +48,7 @@ public class SuperAdminSetupController {
     }
 
     @PostMapping("/resend-otp")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('RECEPTIONIST')")
     public ResponseEntity<ApiResponse> resendOTP(
             @RequestParam String email) {
 
@@ -54,7 +57,7 @@ public class SuperAdminSetupController {
     }
 
     @PostMapping("/verify-otp")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('RECEPTIONIST')")
     public ResponseEntity<ApiResponse> verifyOTP(
             @Valid @RequestBody VerifyOTPRequest request,
             Authentication authentication,
@@ -72,11 +75,8 @@ public class SuperAdminSetupController {
         }
     }
 
-    /**
-     * Step 4: Update password
-     */
     @PostMapping("/update-password")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('RECEPTIONIST')")
     public ResponseEntity<ApiResponse> updatePassword(
             @Valid @RequestBody UpdatePasswordRequest request,
             Authentication authentication,
@@ -98,7 +98,6 @@ public class SuperAdminSetupController {
      * Check setup status
      */
     @GetMapping("/status")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<ApiResponse> getSetupStatus(
             Authentication authentication,
             HttpServletRequest httpRequest) {
@@ -117,3 +116,4 @@ public class SuperAdminSetupController {
 
 
 }
+

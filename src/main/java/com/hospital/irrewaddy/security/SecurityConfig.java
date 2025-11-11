@@ -94,51 +94,41 @@ public class SecurityConfig {
                         // Auth endpoints - PUBLIC ACCESS
                         .requestMatchers(
                                 "/hospital/api/auth/login",
-                                "/hospital/api/auth/register",
                                 "/hospital/api/auth/forgot-password",
                                 "/hospital/api/auth/verify-otp",
-                                "/hospital/api/auth/reset-password",
                                 "/hospital/api/auth/resend-otp",
-                                "/hospital/api/auth/send-otp"  // Added for admin setup
+                                "/hospital/api/auth/send-otp"
                         ).permitAll()
 
-                        // Auth endpoints that require authentication
-                        .requestMatchers("/hospital/api/auth/change-password").authenticated()
+                        // Only for Super Admin Routes
+                        .requestMatchers("/hospital/api/superadmin/**").hasRole("SUPER_ADMIN")
 
-                        // Departments
+                        // Only for Admin Routes
+                        .requestMatchers("/hospital/api/admin/**").hasRole("ADMIN")
+
+                        // Only for Receptionist routes
+                        .requestMatchers("/hospital/api/receptionist/**").hasRole("RECEPTIONIST")
+
+                        // Only for Doctor routes
+                        .requestMatchers("/hospital/api/doctor/setup/**").hasRole("DOCTOR")
+
+                        // Only for Patient routes
+                        .requestMatchers("/hospital/api/patient/**").hasRole("PATIENT")
+
+
+                        //Department Related Routes
                         .requestMatchers("/hospital/api/departments", "/hospital/api/departments/active").permitAll()
                         .requestMatchers("/hospital/api/departments/{id}", "/hospital/api/departments/name/{name}").permitAll()
                         .requestMatchers("/hospital/api/departments/**").hasRole("ADMIN")
 
-                        // Doctors
-                        .requestMatchers("/hospital/api/doctors").permitAll()
-                        .requestMatchers("/hospital/api/doctors/{id}").permitAll()
-                        .requestMatchers("/hospital/api/doctors/**").hasRole("ADMIN")
 
-                        // Receptionists
-                        .requestMatchers("/hospital/api/receptionists/on-duty").hasAnyRole("ADMIN", "RECEPTIONIST")
-                        .requestMatchers("/hospital/api/receptionists/**").hasRole("ADMIN")
+                        // Receptionist Related Routes
+                        .requestMatchers("/hospital/api/receptionists/on-duty").hasAnyRole("SUPER_ADMIN", "ADMIN", "RECEPTIONIST")
+                        .requestMatchers("/hospital/api/receptionists/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "RECEPTIONIST")
 
-                        // Appointments
+                        // Appointment Related Routes
                         .requestMatchers("/hospital/api/appointments").hasAnyRole("PATIENT", "ADMIN")
                         .requestMatchers("/hospital/api/appointments/**").authenticated()
-
-                        // ⭐ UPDATED: Super Admin routes
-
-                        .requestMatchers("/hospital/api/superadmin/**").authenticated()
-
-
-
-                        // ⭐ NEW: Admin setup flow endpoints (must be BEFORE general admin routes)
-                        //.requestMatchers("/hospital/api/admin/complete-profile").hasRole("ADMIN")
-                        //.requestMatchers("/hospital/api/admin/setup-status").hasRole("ADMIN")
-                        .requestMatchers("/hospital/api/admin/**").hasRole("ADMIN")
-
-                        // Patient routes
-                        .requestMatchers("/hospital/api/patient/**").hasRole("PATIENT")
-
-                        // Receptionist routes
-                        .requestMatchers("/hospital/api/receptionist/**").hasRole("RECEPTIONIST")
 
                         .anyRequest().authenticated()
                 )

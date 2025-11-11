@@ -255,7 +255,6 @@ public class DashboardService {
         response.setPatientPhone(appointment.getPatient().getUser().getPhone());
         response.setDoctorId(appointment.getDoctor().getId());
         response.setDoctorName(appointment.getDoctor().getUser().getFullName());
-        response.setDoctorSpecialization(appointment.getDoctor().getSpecialization());
         response.setDepartmentName(appointment.getDepartment() != null ?
                 appointment.getDepartment().getName() : null);
         response.setAppointmentDate(appointment.getAppointmentDate());

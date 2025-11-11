@@ -19,7 +19,6 @@ public class Department {
 
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
-
     @Column(name = "capacity")
     private Integer capacity;
     @ManyToOne

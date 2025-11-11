@@ -1,7 +1,6 @@
 package com.hospital.irrewaddy.controller;
 
-import com.hospital.irrewaddy.dto.CreateDoctorRequest;
-import com.hospital.irrewaddy.dto.DoctorResponse;
+import com.hospital.irrewaddy.dto.*;
 import com.hospital.irrewaddy.service.DoctorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +40,11 @@ public class DoctorController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
-
-    // Create doctor (Admin only)
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createDoctor(@Valid @RequestBody CreateDoctorRequest request) {
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    public ResponseEntity<?> createReceptionist(@Valid @RequestBody CreateDoctorRequest request) {
         try {
-            DoctorResponse response = doctorService.createDoctor(request);
+            CreateDoctorResponse response = doctorService.createDoctor(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

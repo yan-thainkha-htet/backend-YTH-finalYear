@@ -15,99 +15,83 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/hospital/api/superadmin/admins")
+@RequestMapping("/hospital/api/superadmin/")
 @CrossOrigin(origins = "*")
 public class SuperAdminController {
 
-    @Autowired
-    private AdminService adminService;
-    @PostMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<?> createAdmin(@Valid @RequestBody CreateAdminRequest request) {
-        try {
-            //log.info("Received request to create admin: {}", request.getUsername());
-            CreateAdminResponse response = adminService.createAdmin(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (RuntimeException e) {
-            //log.error("Error creating admin: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(Map.of(
-                    "success", false,
-                    "message", e.getMessage()
-            ));
-        }
-    }
-    @GetMapping
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<?> getAllAdmins() {
-        try {
-            List<AdminResponse> admins = adminService.getAllAdmins();
-            return ResponseEntity.ok(admins);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
 
-    // Get admin by ID (Admin only)
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<?> getAdminById(@PathVariable Long id) {
-        try {
-            AdminResponse admin = adminService.getAdminById(id);
-            return ResponseEntity.ok(admin);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    // Create admin (Super Admin only)
-//    @PostMapping
+//    @GetMapping
 //    @PreAuthorize("hasRole('SUPER_ADMIN')")
-//    public ResponseEntity<?> createAdmin(@Valid @RequestBody CreateAdminRequest request) {
+//    public ResponseEntity<?> getAllAdmins() {
 //        try {
-//            CreateAdminResponse response = adminService.createAdmin(request);
-//            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//            List<AdminResponse> admins = adminService.getAllAdmins();
+//            return ResponseEntity.ok(admins);
 //        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 //        }
 //    }
-
-
-    // Update admin (Admin only)
-//    @PutMapping("/{id}")
+//
+//    // Get admin by ID (Admin only)
+//    @GetMapping("/{id}")
 //    @PreAuthorize("hasRole('SUPER_ADMIN')")
-//    public ResponseEntity<?> updateAdmin(@PathVariable Long id,
-//                                         @Valid @RequestBody CreateAdminRequest request) {
+//    public ResponseEntity<?> getAdminById(@PathVariable Long id) {
 //        try {
-//            AdminResponse response = adminService.updateAdmin(id, request);
-//            return ResponseEntity.ok(response);
+//            AdminResponse admin = adminService.getAdminById(id);
+//            return ResponseEntity.ok(admin);
 //        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 //        }
 //    }
-
-    // Soft delete admin (Admin only)
-//    @DeleteMapping("/{id}")
-//    @PreAuthorize("hasRole('SUPER_ADMIN')")
-//    public ResponseEntity<?> deleteAdmin(@PathVariable Long id) {
-//        try {
-//            adminService.deleteAdmin(id);
-//            return ResponseEntity.ok("Admin deactivated successfully");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        }
-//    }
-
-    // Hard delete admin (Admin only) - use with caution
-//    @DeleteMapping("/{id}/permanent")
-//    @PreAuthorize("hasRole('SUPER_ADMIN')")
-//    public ResponseEntity<?> hardDeleteAdmin(@PathVariable Long id) {
-//        try {
-//            adminService.hardDeleteAdmin(id);
-//            return ResponseEntity.ok("Admin permanently deleted");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        }
-//    }
+//
+//    // Create admin (Super Admin only)
+////    @PostMapping
+////    @PreAuthorize("hasRole('SUPER_ADMIN')")
+////    public ResponseEntity<?> createAdmin(@Valid @RequestBody CreateAdminRequest request) {
+////        try {
+////            CreateAdminResponse response = adminService.createAdmin(request);
+////            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+////        } catch (Exception e) {
+////            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+////        }
+////    }
+//
+//
+//    // Update admin (Admin only)
+////    @PutMapping("/{id}")
+////    @PreAuthorize("hasRole('SUPER_ADMIN')")
+////    public ResponseEntity<?> updateAdmin(@PathVariable Long id,
+////                                         @Valid @RequestBody CreateAdminRequest request) {
+////        try {
+////            AdminResponse response = adminService.updateAdmin(id, request);
+////            return ResponseEntity.ok(response);
+////        } catch (Exception e) {
+////            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+////        }
+////    }
+//
+//    // Soft delete admin (Admin only)
+////    @DeleteMapping("/{id}")
+////    @PreAuthorize("hasRole('SUPER_ADMIN')")
+////    public ResponseEntity<?> deleteAdmin(@PathVariable Long id) {
+////        try {
+////            adminService.deleteAdmin(id);
+////            return ResponseEntity.ok("Admin deactivated successfully");
+////        } catch (Exception e) {
+////            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+////        }
+////    }
+//
+//    // Hard delete admin (Admin only) - use with caution
+////    @DeleteMapping("/{id}/permanent")
+////    @PreAuthorize("hasRole('SUPER_ADMIN')")
+////    public ResponseEntity<?> hardDeleteAdmin(@PathVariable Long id) {
+////        try {
+////            adminService.hardDeleteAdmin(id);
+////            return ResponseEntity.ok("Admin permanently deleted");
+////        } catch (Exception e) {
+////            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+////        }
+////    }
 
 }
 

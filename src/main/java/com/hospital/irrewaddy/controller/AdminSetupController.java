@@ -4,6 +4,7 @@ import com.hospital.irrewaddy.dto.*;
 import com.hospital.irrewaddy.security.CustomUserDetails;
 import com.hospital.irrewaddy.security.JwtUtil;
 import com.hospital.irrewaddy.service.AdminService;
+import com.hospital.irrewaddy.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,7 @@ public class AdminSetupController {
     private AdminService adminService;
 
     @Autowired
-    private JwtUtil jwtUtil;
-
+    private UserService userService;
 
     @PostMapping("/complete-profile")
     @PreAuthorize("hasRole('ADMIN')")
@@ -43,7 +43,7 @@ public class AdminSetupController {
         System.out.println("Principal: " + authentication.getPrincipal());
 
         try {
-            Long userId = extractUserIdFromAuth(authentication, httpRequest);
+            Long userId = userService.extractUserIdFromAuth(authentication, httpRequest);
             ApiResponse response = adminService.completeProfile(userId, request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -54,21 +54,15 @@ public class AdminSetupController {
         }
     }
 
-    /**
-     * Step 2: Resend OTP
-     */
     @PostMapping("/resend-otp")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> resendOTP(
             @RequestParam String email) {
 
-        ApiResponse response = adminService.sendEmailOTP(email);
+        ApiResponse response = userService.sendEmailOTP(email);
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Step 3: Verify OTP
-     */
     @PostMapping("/verify-otp")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> verifyOTP(
@@ -77,8 +71,8 @@ public class AdminSetupController {
             HttpServletRequest httpRequest) {
 
         try {
-            Long userId = extractUserIdFromAuth(authentication, httpRequest);
-            ApiResponse response = adminService.verifyEmailOTP(userId, request);
+            Long userId = userService.extractUserIdFromAuth(authentication, httpRequest);
+            ApiResponse response = userService.verifyEmailOTP(userId, request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             ApiResponse errorResponse = new ApiResponse();
@@ -88,9 +82,6 @@ public class AdminSetupController {
         }
     }
 
-    /**
-     * Step 4: Update password
-     */
     @PostMapping("/update-password")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> updatePassword(
@@ -99,8 +90,8 @@ public class AdminSetupController {
             HttpServletRequest httpRequest) {
 
         try {
-            Long userId = extractUserIdFromAuth(authentication, httpRequest);
-            ApiResponse response = adminService.updatePassword(userId, request);
+            Long userId = userService.extractUserIdFromAuth(authentication, httpRequest);
+            ApiResponse response = userService.updatePassword(userId, request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             ApiResponse errorResponse = new ApiResponse();
@@ -114,13 +105,14 @@ public class AdminSetupController {
      * Check setup status
      */
     @GetMapping("/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> getSetupStatus(
             Authentication authentication,
             HttpServletRequest httpRequest) {
 
         try {
-            Long userId = extractUserIdFromAuth(authentication, httpRequest);
-            ApiResponse response = adminService.checkSetupStatus(userId);
+            Long userId = userService.extractUserIdFromAuth(authentication, httpRequest);
+            ApiResponse response = userService.checkSetupStatus(userId);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             ApiResponse errorResponse = new ApiResponse();
@@ -130,43 +122,5 @@ public class AdminSetupController {
         }
     }
 
-    /**
-     * Extract user ID from authentication object
-     * Falls back to JWT token if authentication principal is not CustomUserDetails
-     */
-    private Long extractUserIdFromAuth(Authentication authentication, HttpServletRequest request) {
-        // Method 1: Try to get from Authentication object (works when using CustomUserDetails)
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
-            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            return userDetails.getId();
-        }
 
-        // Method 2: Fallback - Extract from JWT token directly
-        String jwt = getJwtFromRequest(request);
-        if (StringUtils.hasText(jwt)) {
-            try {
-                Long userId = jwtUtil.extractUserId(jwt);
-                if (userId != null) {
-                    return userId;
-                }
-            } catch (Exception e) {
-                // Token parsing failed
-            }
-        }
-
-        throw new RuntimeException("Unable to extract user ID from authentication. Please ensure you're logged in with a valid token.");
-    }
-
-    /**
-     * Extract JWT token from Authorization header
-     */
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-
-        return null;
-    }
 }

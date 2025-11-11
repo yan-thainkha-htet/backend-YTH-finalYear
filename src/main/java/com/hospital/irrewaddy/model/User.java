@@ -141,8 +141,11 @@ public class User {
     public Boolean getIsActive() { return isActive; }
     public void setIsActive(Boolean isActive) { this.isActive = isActive; }
 
-    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public String getAddress() { return address; }
 
+    public void setAddress(String address) { this.address = address; }
+
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
     public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
 
 
