@@ -34,7 +34,7 @@ public class Doctor {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     private List<Appointment> appointments;
 
-    // Many-to-Many relationship with Specialization
+    // Many-to-Many relationship with Specializ ation
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "doctor_specialization",

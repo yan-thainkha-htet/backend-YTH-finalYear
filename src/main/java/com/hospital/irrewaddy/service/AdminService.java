@@ -292,6 +292,7 @@ public class AdminService {
         response.setUsername(admin.getUsername());
         response.setEmail(admin.getEmail());
         response.setRole(admin.getRole().toString());
+        response.setMessage("message");
 
         return response;
     }

@@ -6,6 +6,7 @@ public class CreateAdminResponse {
     private String username;
     private String email;
     private String role;
+    private String message;
 
     public CreateAdminResponse() {
 
@@ -39,4 +40,6 @@ public class CreateAdminResponse {
 
     public void setRole(String role) { this.role = role; }
 
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
 }
