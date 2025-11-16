@@ -162,6 +162,51 @@ public class ReceptionistService {
         return response;
     }
 
+    public ReceptionistResponse getReceptionistById(Long id) {
+        User receptionist = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Receptionist not found"));
+
+        if (receptionist.getRole() != User.UserRole.RECEPTIONIST) {
+            throw new RuntimeException("User is not an receptionist");
+        }
+
+        return convertToResponse(receptionist, null);
+    }
+
+    public ReceptionistResponse getReceptionistByUserId(Long userId) {
+        Receptionist receptionist = receptionistRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Receptionist not found"));
+
+        return convertToReceptionistResponse(receptionist, null);
+    }
+
+    private ReceptionistResponse convertToReceptionistResponse(Receptionist receptionist, String message) {
+        ReceptionistResponse response = new ReceptionistResponse();
+        response.setId(receptionist.getId());
+        response.setUsername(receptionist.getUser().getUsername());
+        response.setEmail(receptionist.getUser().getEmail());
+        response.setPhone(receptionist.getUser().getPhone());
+        response.setGender(receptionist.getUser().getGender());
+        response.setFullName(receptionist.getUser().getFullName());
+        response.setIsActive(receptionist.getUser().getIsActive());
+        response.setMessage(message);
+        return response;
+    }
+
+
+    private ReceptionistResponse convertToResponse(User receptionist, String message) {
+        ReceptionistResponse response = new ReceptionistResponse();
+        response.setId(receptionist.getId());
+        response.setUsername(receptionist.getUsername());
+        response.setEmail(receptionist.getEmail());
+        response.setPhone(receptionist.getPhone());
+        response.setGender(receptionist.getGender());
+        response.setFullName(receptionist.getFullName());
+        response.setIsActive(receptionist.getIsActive());
+        response.setMessage(message);
+        return response;
+    }
+
 //    public List<ReceptionistResponse> getAllReceptionists() {
 //        return receptionistRepository.findAll().stream()
 //                .map(receptionist -> convertToResponse(receptionist, null))

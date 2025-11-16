@@ -200,6 +200,12 @@ public class DoctorService {
         return convertToResponse(doctor, null);
     }
 
+    public DoctorResponse getDoctorByUserId(Long userId) {
+        Doctor doctor = doctorRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+        return convertToResponse(doctor, null);
+    }
+
     @Transactional
     public DoctorResponse updateDoctor(Long id, CreateDoctorRequest request) {
         Doctor doctor = doctorRepository.findById(id)

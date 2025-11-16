@@ -2,8 +2,6 @@ package com.hospital.irrewaddy.service;
 
 import com.hospital.irrewaddy.dto.*;
 import com.hospital.irrewaddy.model.*;
-import com.hospital.irrewaddy.repository.AdminRepository;
-import com.hospital.irrewaddy.repository.EmailOTPRepository;
 import com.hospital.irrewaddy.repository.PatientRepository;
 import com.hospital.irrewaddy.repository.UserRepository;
 import com.hospital.irrewaddy.security.CustomUserDetails;
@@ -14,12 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class PatientService {
@@ -92,6 +86,23 @@ public class PatientService {
 //        }
 
         return convertToCreatePatientResponse(user, "Patient created successfully");
+    }
+
+    public PatientResponse getPatientById(Long id) {
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+        return convertToResponse(patient, null);
+    }
+
+    public PatientResponse getPatientByUserId(Long id) {
+        Patient patient = patientRepository.findByUserId(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+        return convertToResponse(patient, null);
+    }
+
+    private PatientResponse convertToResponse(Patient patient, Object o) {
+        PatientResponse patientResponse = new PatientResponse(patient.getId(), patient.getBloodGroup());
+        return patientResponse;
     }
 
     @Transactional

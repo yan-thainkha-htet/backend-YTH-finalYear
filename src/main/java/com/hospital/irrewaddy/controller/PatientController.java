@@ -31,5 +31,16 @@ public class PatientController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST', 'PATIENT')")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPatientById(@PathVariable Long id) {
+        try {
+            PatientResponse patient = patientService.getPatientById(id);
+            return ResponseEntity.ok(patient);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
 
 }

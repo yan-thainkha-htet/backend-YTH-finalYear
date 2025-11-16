@@ -1,8 +1,10 @@
 package com.hospital.irrewaddy.service;
 
 import com.hospital.irrewaddy.dto.*;
+import com.hospital.irrewaddy.model.Doctor;
 import com.hospital.irrewaddy.model.EmailOTP;
 import com.hospital.irrewaddy.model.User;
+import com.hospital.irrewaddy.repository.DoctorRepository;
 import com.hospital.irrewaddy.repository.EmailOTPRepository;
 import com.hospital.irrewaddy.repository.UserRepository;
 import com.hospital.irrewaddy.security.CustomUserDetails;
@@ -11,12 +13,15 @@ import com.hospital.irrewaddy.util.ValidationUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -36,6 +41,18 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private DoctorService doctorService;
+
+    @Autowired
+    private AdminService adminService;
+
+    @Autowired
+    private ReceptionistService receptionistService;
+
+    @Autowired
+    private PatientService patientService;
 
     /**
      * Extract user ID from authentication object
@@ -75,6 +92,35 @@ public class UserService {
         }
 
         return null;
+    }
+
+    @Transactional
+    public ProfileResponse getUserProfile() {
+
+        String tokenUsername = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByUsernameOrEmail(tokenUsername, tokenUsername)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        ProfileResponse profileResponse = new ProfileResponse();
+
+        if (user.getRole().equals(User.UserRole.DOCTOR)) {
+            DoctorResponse doctorResponse = doctorService.getDoctorByUserId(user.getId());
+            profileResponse.setDoctorInfo(doctorResponse);
+        } else if (user.getRole().equals(User.UserRole.ADMIN) || user.getRole().equals(User.UserRole.SUPER_ADMIN)) {
+            AdminResponse adminResponse = adminService.getAdminByUserId(user.getId());
+            profileResponse.setAdminInfo(adminResponse);
+        } else if (user.getRole().equals(User.UserRole.RECEPTIONIST)) {
+            ReceptionistResponse receptionistResponse = receptionistService.getReceptionistByUserId(user.getId());
+            profileResponse.setReceptionistInfo(receptionistResponse);
+        } else if (user.getRole().equals(User.UserRole.PATIENT)) {
+            PatientResponse patientResponse = patientService.getPatientByUserId(user.getId());
+            profileResponse.setPatientInfo(patientResponse);
+        }
+
+        return profileResponse;
     }
 
     @Transactional

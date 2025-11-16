@@ -176,6 +176,13 @@ public class AdminService {
         return convertToResponse(admin, null);
     }
 
+    public AdminResponse getAdminByUserId(Long userId) {
+        Admin admin = adminRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        return convertToAdminResponse(admin, null);
+    }
+
     @Transactional
     public AdminResponse updateAdmin(Long id, CreateAdminRequest request) {
         User admin = userRepository.findById(id)
@@ -282,6 +289,21 @@ public class AdminService {
         response.setRole(admin.getRole().toString());
         response.setIsActive(admin.getIsActive());
         response.setCreatedAt(admin.getCreatedAt());
+        response.setMessage(message);
+        return response;
+    }
+
+    private AdminResponse convertToAdminResponse(Admin admin, String message) {
+        AdminResponse response = new AdminResponse();
+        response.setId(admin.getId());
+        response.setUsername(admin.getUser().getUsername());
+        response.setEmail(admin.getUser().getEmail());
+        response.setPhone(admin.getUser().getPhone());
+        response.setGender(admin.getUser().getGender());
+        response.setFullName(admin.getUser().getFullName());
+        response.setRole(admin.getUser().getRole().toString());
+        response.setIsActive(admin.getUser().getIsActive());
+        response.setCreatedAt(admin.getUser().getCreatedAt());
         response.setMessage(message);
         return response;
     }
