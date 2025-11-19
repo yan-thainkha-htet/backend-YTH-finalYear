@@ -2,6 +2,7 @@ package com.hospital.irrewaddy.controller;
 
 import com.hospital.irrewaddy.dto.AppointmentResponse;
 import com.hospital.irrewaddy.dto.DashboardStatsResponse;
+import com.hospital.irrewaddy.dto.SuperAdminDashboardData;
 import com.hospital.irrewaddy.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -100,6 +101,15 @@ public class DashboardController {
         }
     }
 
+    @GetMapping("/admin/{id}")
+    public ResponseEntity<?> getDashboardByAdminId(@PathVariable Long id) {
+        try {
+            SuperAdminDashboardData data = dashboardService.getDashboardByAdminId(id);
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
     /**
      * Get active users count by role
      */

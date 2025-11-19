@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -50,4 +51,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     // Find today's appointments for doctor
     @Query("SELECT a FROM Appointment a WHERE a.doctor.id = :doctorId AND a.appointmentDate = :date ORDER BY a.appointmentTime ASC")
     List<Appointment> findTodayAppointmentsByDoctor(@Param("doctorId") Long doctorId, @Param("date") LocalDate date);
+
+    long countByAppointmentDate(LocalDate date);
 }

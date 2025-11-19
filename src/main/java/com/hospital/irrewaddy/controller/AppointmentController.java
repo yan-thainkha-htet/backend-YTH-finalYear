@@ -85,6 +85,21 @@ public class AppointmentController {
         }
     }
 
+    // Get all appointments with pagination (Admin only)
+    @GetMapping("/limit")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    public ResponseEntity<?> getAppointmentsByLimit(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        try {
+            return ResponseEntity.ok(appointmentService.getAppointmentsByLimit(page, size));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+
     // Get appointments by status (Admin only)
     @GetMapping("/status/{status}")
     @PreAuthorize("hasRole('ADMIN')")

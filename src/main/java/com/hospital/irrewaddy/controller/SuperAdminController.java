@@ -3,7 +3,9 @@ package com.hospital.irrewaddy.controller;
 import com.hospital.irrewaddy.dto.AdminResponse;
 import com.hospital.irrewaddy.dto.CreateAdminRequest;
 import com.hospital.irrewaddy.dto.CreateAdminResponse;
+import com.hospital.irrewaddy.dto.DoctorResponse;
 import com.hospital.irrewaddy.service.AdminService;
+import com.hospital.irrewaddy.service.SuperAdminService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +20,8 @@ import java.util.Map;
 @RequestMapping("/hospital/api/superadmin/")
 @CrossOrigin(origins = "*")
 public class SuperAdminController {
-
-
+    @Autowired
+    private SuperAdminService superAdminService;
 //    @GetMapping
 //    @PreAuthorize("hasRole('SUPER_ADMIN')")
 //    public ResponseEntity<?> getAllAdmins() {

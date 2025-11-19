@@ -4,6 +4,10 @@ import com.hospital.irrewaddy.dto.*;
 import com.hospital.irrewaddy.model.*;
 import com.hospital.irrewaddy.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -250,4 +254,12 @@ public class AppointmentService {
         response.setMessage(message);
         return response;
     }
+
+    public Page<AppointmentResponse> getAppointmentsByLimit(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        return appointmentRepository.findAll(pageable)
+                .map(apt -> convertToResponse(apt, null));
+    }
+
 }

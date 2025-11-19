@@ -2,6 +2,7 @@ package com.hospital.irrewaddy.service;
 
 import com.hospital.irrewaddy.dto.AppointmentResponse;
 import com.hospital.irrewaddy.dto.DashboardStatsResponse;
+import com.hospital.irrewaddy.dto.SuperAdminDashboardData;
 import com.hospital.irrewaddy.model.Appointment;
 import com.hospital.irrewaddy.model.User;
 import com.hospital.irrewaddy.repository.*;
@@ -136,6 +137,7 @@ public class DashboardService {
         return stats;
     }
 
+
     /**
      * Get active users count by role
      */
@@ -266,5 +268,18 @@ public class DashboardService {
         response.setCreatedAt(appointment.getCreatedAt());
         response.setUpdatedAt(appointment.getUpdatedAt());
         return response;
+    }
+
+    public SuperAdminDashboardData getDashboardByAdminId(Long id) {
+        try {
+            long patientCount = patientRepository.count();
+            long doctorCount = doctorRepository.count();
+            long totalAppointment = appointmentRepository.count();
+            long todayAppointment = appointmentRepository.countByAppointmentDate(LocalDate.now());
+
+            return new SuperAdminDashboardData(patientCount, doctorCount, totalAppointment, todayAppointment);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
