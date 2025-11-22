@@ -1,6 +1,8 @@
 package com.hospital.irrewaddy.repository;
 
 import com.hospital.irrewaddy.model.Appointment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,6 +38,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     // Find appointments by doctor and status
     List<Appointment> findByDoctorIdAndStatus(Long doctorId, Appointment.AppointmentStatus status);
+
+    long countByStatus(Appointment.AppointmentStatus status);
 
     // Check if doctor has appointment at specific date and time
     boolean existsByDoctorIdAndAppointmentDateAndAppointmentTime(Long doctorId, LocalDate date, java.time.LocalTime time);

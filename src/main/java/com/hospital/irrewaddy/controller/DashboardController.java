@@ -1,6 +1,7 @@
 package com.hospital.irrewaddy.controller;
 
 import com.hospital.irrewaddy.dto.AppointmentResponse;
+import com.hospital.irrewaddy.dto.AppointmentStats;
 import com.hospital.irrewaddy.dto.DashboardStatsResponse;
 import com.hospital.irrewaddy.dto.SuperAdminDashboardData;
 import com.hospital.irrewaddy.service.DashboardService;
@@ -105,6 +106,17 @@ public class DashboardController {
     public ResponseEntity<?> getDashboardByAdminId(@PathVariable Long id) {
         try {
             SuperAdminDashboardData data = dashboardService.getDashboardByAdminId(id);
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/receptionist/{id}/appointment-stats")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST')")
+    public ResponseEntity<?> appointmentStatsByReceptionist(@PathVariable Long id) {
+        try {
+            AppointmentStats data = dashboardService.appointmentStatsByReceptionist(id);
             return ResponseEntity.ok(data);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

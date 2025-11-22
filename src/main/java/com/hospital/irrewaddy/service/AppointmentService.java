@@ -262,4 +262,9 @@ public class AppointmentService {
                 .map(apt -> convertToResponse(apt, null));
     }
 
+    public List<AppointmentResponse> getAppointmentsByDay(LocalDate date) {
+
+        return appointmentRepository.findByAppointmentDate(date).stream().map(appointment -> convertToResponse(appointment, null)).toList();
+    }
+
 }

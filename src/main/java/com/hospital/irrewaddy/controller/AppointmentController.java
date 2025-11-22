@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -87,13 +88,26 @@ public class AppointmentController {
 
     // Get all appointments with pagination (Admin only)
     @GetMapping("/limit")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST')")
     public ResponseEntity<?> getAppointmentsByLimit(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         try {
             return ResponseEntity.ok(appointmentService.getAppointmentsByLimit(page, size));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    // Get all appointments with pagination (Admin only)
+    @GetMapping("/date")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST')")
+    public ResponseEntity<?> getAppointmentsByDate(
+            @RequestParam LocalDate date
+    ) {
+        try {
+            return ResponseEntity.ok(appointmentService.getAppointmentsByDay(date));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

@@ -1,6 +1,7 @@
 package com.hospital.irrewaddy.service;
 
 import com.hospital.irrewaddy.dto.AppointmentResponse;
+import com.hospital.irrewaddy.dto.AppointmentStats;
 import com.hospital.irrewaddy.dto.DashboardStatsResponse;
 import com.hospital.irrewaddy.dto.SuperAdminDashboardData;
 import com.hospital.irrewaddy.model.Appointment;
@@ -278,6 +279,20 @@ public class DashboardService {
             long todayAppointment = appointmentRepository.countByAppointmentDate(LocalDate.now());
 
             return new SuperAdminDashboardData(patientCount, doctorCount, totalAppointment, todayAppointment);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public AppointmentStats appointmentStatsByReceptionist(Long id) {
+        try {
+            long todayAppointment = appointmentRepository.countByAppointmentDate(LocalDate.now());
+            long pendingCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.PENDING);
+            long confirmedCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.CONFIRMED);
+            long completedCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.COMPLETED);
+            long cancelledCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.CANCELLED);
+
+            return new AppointmentStats(todayAppointment, pendingCount, confirmedCount, completedCount, cancelledCount);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
