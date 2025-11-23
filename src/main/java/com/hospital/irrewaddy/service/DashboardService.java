@@ -1,10 +1,9 @@
 package com.hospital.irrewaddy.service;
 
-import com.hospital.irrewaddy.dto.AppointmentResponse;
-import com.hospital.irrewaddy.dto.AppointmentStats;
-import com.hospital.irrewaddy.dto.DashboardStatsResponse;
-import com.hospital.irrewaddy.dto.SuperAdminDashboardData;
+import com.hospital.irrewaddy.dto.*;
 import com.hospital.irrewaddy.model.Appointment;
+import com.hospital.irrewaddy.model.Doctor;
+import com.hospital.irrewaddy.model.Specialization;
 import com.hospital.irrewaddy.model.User;
 import com.hospital.irrewaddy.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -251,6 +248,11 @@ public class DashboardService {
 
     private AppointmentResponse convertToAppointmentResponse(Appointment appointment) {
         AppointmentResponse response = new AppointmentResponse();
+        String specializationNames = appointment.getDoctor().getSpecializations()
+                .stream()
+                .map(Specialization::getName)
+                .collect(Collectors.joining(", "));
+
         response.setId(appointment.getId());
         response.setPatientId(appointment.getPatient().getId());
         response.setPatientName(appointment.getPatient().getUser().getFullName());
@@ -258,6 +260,7 @@ public class DashboardService {
         response.setPatientPhone(appointment.getPatient().getUser().getPhone());
         response.setDoctorId(appointment.getDoctor().getId());
         response.setDoctorName(appointment.getDoctor().getUser().getFullName());
+        response.setDoctorSpecialization(specializationNames);
         response.setDepartmentName(appointment.getDepartment() != null ?
                 appointment.getDepartment().getName() : null);
         response.setAppointmentDate(appointment.getAppointmentDate());
@@ -293,6 +296,60 @@ public class DashboardService {
             long cancelledCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.CANCELLED);
 
             return new AppointmentStats(todayAppointment, pendingCount, confirmedCount, completedCount, cancelledCount);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public AppointmentStats appointmentStatsByPatient(Long id) {
+        try {
+            long todayAppointment = appointmentRepository.countByAppointmentDate(LocalDate.now());
+            long completedCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.COMPLETED);
+            long cancelledCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.CANCELLED);
+            List<Appointment> appointments = appointmentRepository.findUpcomingAppointmentsByPatient(id, LocalDate.now());
+            List<AppointmentResponse> appointmentResponse = appointments.stream()
+                    .map(this::convertToAppointmentResponse)
+                    .toList();
+            AppointmentStats stats = new AppointmentStats();
+            stats.setTodayTotal(todayAppointment);
+            stats.setUpcoming(appointments.size());
+            stats.setCompleted(completedCount);
+            stats.setCancelled(cancelledCount);
+            stats.setUpcomingAppointments(appointmentResponse);
+            return stats;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public DoctorDashboardStats dashboardStatsByDoctor(Long id) {
+        try {
+            long todayAppointment = appointmentRepository.countByAppointmentDate(LocalDate.now());
+            LocalDate today = LocalDate.now();
+            LocalDate startOfWeek = today.with(java.time.DayOfWeek.MONDAY);
+            LocalDate endOfWeek = today.with(java.time.DayOfWeek.SUNDAY);
+            long thisWeekCount  = appointmentRepository.countByAppointmentDateBetween(startOfWeek, endOfWeek);
+            long completedCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.COMPLETED);
+            long pendingCount = appointmentRepository.countByStatusAndDoctorId(Appointment.AppointmentStatus.PENDING, id);
+            long totalPatientsCount = appointmentRepository.countUniquePatientsByDoctorId(id);
+            DoctorDashboardStats stats = new DoctorDashboardStats();
+            Optional<Doctor> optional = doctorRepository.findById(id);
+            if(optional.isPresent()) {
+                Doctor doctor = optional.get();
+                stats.setDepartment(doctor.getDepartment().getName());
+                String specializationNames =
+                doctor.getSpecializations()
+                        .stream()
+                        .map(Specialization::getName)
+                        .collect(Collectors.joining(", "));
+                stats.setSpecialization(specializationNames);
+                stats.setExperienceYears(doctor.getExperienceYears());
+            }
+            stats.setTodayTotal(todayAppointment);
+            stats.setThisWeekTotal(thisWeekCount);
+            stats.setPending(pendingCount);
+            stats.setTotalPatients(totalPatientsCount);
+            return stats;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

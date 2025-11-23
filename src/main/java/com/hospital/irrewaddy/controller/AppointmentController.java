@@ -62,6 +62,18 @@ public class AppointmentController {
         }
     }
 
+    @GetMapping("/doctor-upcoming")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<?> getUpcomingAppointmentsByDoctor(Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            List<AppointmentResponse> appointments = appointmentService.getUpcomingAppointmentsByDoctor(username);
+            return ResponseEntity.ok(appointments);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     // Get appointment by ID
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'ADMIN')")

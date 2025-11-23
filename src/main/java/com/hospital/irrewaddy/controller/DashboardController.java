@@ -1,9 +1,6 @@
 package com.hospital.irrewaddy.controller;
 
-import com.hospital.irrewaddy.dto.AppointmentResponse;
-import com.hospital.irrewaddy.dto.AppointmentStats;
-import com.hospital.irrewaddy.dto.DashboardStatsResponse;
-import com.hospital.irrewaddy.dto.SuperAdminDashboardData;
+import com.hospital.irrewaddy.dto.*;
 import com.hospital.irrewaddy.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -117,6 +114,26 @@ public class DashboardController {
     public ResponseEntity<?> appointmentStatsByReceptionist(@PathVariable Long id) {
         try {
             AppointmentStats data = dashboardService.appointmentStatsByReceptionist(id);
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/patient/{id}/appointment-stats")
+    public ResponseEntity<?> getDashboardByPatientId(@PathVariable Long id) {
+        try {
+            AppointmentStats data = dashboardService.appointmentStatsByPatient(id);
+            return ResponseEntity.ok(data);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/doctor/{id}/dashboard-stats")
+    public ResponseEntity<?> getDashboardByDoctor(@PathVariable Long id) {
+        try {
+            DoctorDashboardStats data = dashboardService.dashboardStatsByDoctor(id);
             return ResponseEntity.ok(data);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

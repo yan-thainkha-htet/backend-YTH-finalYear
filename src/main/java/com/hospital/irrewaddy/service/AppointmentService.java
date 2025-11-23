@@ -90,7 +90,7 @@ public class AppointmentService {
     }
 
     public List<AppointmentResponse> getMyAppointments(String username) {
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameOrEmail(username, username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Patient patient = patientRepository.findByUserId(user.getId())
@@ -113,6 +113,21 @@ public class AppointmentService {
 
         List<Appointment> appointments = appointmentRepository
                 .findUpcomingAppointmentsByPatient(patient.getId(), LocalDate.now());
+
+        return appointments.stream()
+                .map(apt -> convertToResponse(apt, null))
+                .collect(Collectors.toList());
+    }
+
+    public List<AppointmentResponse> getUpcomingAppointmentsByDoctor(String username) {
+        User user = userRepository.findByUsernameOrEmail(username, username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Doctor doctor = doctorRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Doctor profile not found"));
+
+        List<Appointment> appointments = appointmentRepository
+                .findUpcomingAppointmentsByDoctor(doctor.getId(), LocalDate.now());
 
         return appointments.stream()
                 .map(apt -> convertToResponse(apt, null))
@@ -234,11 +249,16 @@ public class AppointmentService {
     // Helper method to convert Appointment to Response
     private AppointmentResponse convertToResponse(Appointment appointment, String message) {
         AppointmentResponse response = new AppointmentResponse();
+        String specializationNames = appointment.getDoctor().getSpecializations()
+                .stream()
+                .map(Specialization::getName)
+                .collect(Collectors.joining(", "));
         response.setId(appointment.getId());
         response.setPatientId(appointment.getPatient().getId());
         response.setPatientName(appointment.getPatient().getUser().getFullName());
         response.setPatientEmail(appointment.getPatient().getUser().getEmail());
         response.setPatientPhone(appointment.getPatient().getUser().getPhone());
+        response.setDoctorSpecialization(specializationNames);
         response.setDoctorId(appointment.getDoctor().getId());
         response.setDoctorName(appointment.getDoctor().getUser().getFullName());
         response.setDepartmentName(appointment.getDepartment() != null ?

@@ -16,7 +16,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     // Find doctors by department
     List<Doctor> findByDepartmentId(Long departmentId);
 
-
     // Find active doctors (through user relationship)
     List<Doctor> findByUser_IsActiveTrue();
 }

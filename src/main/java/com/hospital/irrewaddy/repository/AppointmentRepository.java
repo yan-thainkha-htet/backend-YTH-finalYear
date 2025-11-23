@@ -41,6 +41,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     long countByStatus(Appointment.AppointmentStatus status);
 
+    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.status = PENDING AND a.doctor.id = :doctorId")
+    long countByStatusAndDoctorId(Appointment.AppointmentStatus status, @Param("doctorId") Long doctorId);
+
     // Check if doctor has appointment at specific date and time
     boolean existsByDoctorIdAndAppointmentDateAndAppointmentTime(Long doctorId, LocalDate date, java.time.LocalTime time);
 
@@ -52,9 +55,18 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     @Query("SELECT a FROM Appointment a WHERE a.patient.id = :patientId AND a.appointmentDate >= :currentDate ORDER BY a.appointmentDate ASC, a.appointmentTime ASC")
     List<Appointment> findUpcomingAppointmentsByPatient(@Param("patientId") Long patientId, @Param("currentDate") LocalDate currentDate);
 
+    // Find upcoming appointments for doctor
+    @Query("SELECT a FROM Appointment a WHERE a.doctor.id = :doctorId AND a.appointmentDate >= :currentDate ORDER BY a.appointmentDate ASC, a.appointmentTime ASC")
+    List<Appointment> findUpcomingAppointmentsByDoctor(@Param("doctorId") Long doctorId, @Param("currentDate") LocalDate currentDate);
+
     // Find today's appointments for doctor
     @Query("SELECT a FROM Appointment a WHERE a.doctor.id = :doctorId AND a.appointmentDate = :date ORDER BY a.appointmentTime ASC")
     List<Appointment> findTodayAppointmentsByDoctor(@Param("doctorId") Long doctorId, @Param("date") LocalDate date);
 
     long countByAppointmentDate(LocalDate date);
+
+    long countByAppointmentDateBetween(LocalDate startDate, LocalDate endDate);
+
+    @Query("SELECT COUNT(DISTINCT a.patient.id) FROM Appointment a WHERE a.doctor.id = :doctorId")
+    long countUniquePatientsByDoctorId(@Param("doctorId") Long doctorId);
 }
