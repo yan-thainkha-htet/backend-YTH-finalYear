@@ -1,11 +1,9 @@
 package com.hospital.irrewaddy.service;
 
-import com.hospital.irrewaddy.dto.ApiResponse;
-import com.hospital.irrewaddy.dto.BulkAvailabilityRequest;
-import com.hospital.irrewaddy.dto.DoctorAvailabilityRequest;
-import com.hospital.irrewaddy.dto.DoctorAvailabilityResponse;
+import com.hospital.irrewaddy.dto.*;
 import com.hospital.irrewaddy.model.Doctor;
 import com.hospital.irrewaddy.model.DoctorAvailability;
+import com.hospital.irrewaddy.model.Specialization;
 import com.hospital.irrewaddy.repository.DoctorAvailabilityRepository;
 import com.hospital.irrewaddy.repository.DoctorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,6 +127,48 @@ public class DoctorAvailabilityService {
                 .collect(Collectors.toList());
     }
 
+    public List<DoctorWithAvailabilityResponse> getAllDoctorsWithAvailability() {
+
+        List<Doctor> doctors = doctorRepository.findAll();
+
+        return doctors.stream()
+                // Filter: doctor must have at least one available slot
+                .filter(doctor ->
+                        availabilityRepository.findByDoctorId(doctor.getId())
+                                .stream()
+                                .anyMatch(DoctorAvailability::getAvailable)   // only true availability
+                )
+
+                // Map doctor → response
+                .map(doctor -> {
+
+                    // Convert only available schedules
+                    List<DoctorAvailabilityResponse> availabilityResponses =
+                            availabilityRepository.findByDoctorId(doctor.getId())
+                                    .stream()
+                                    .filter(DoctorAvailability::getAvailable) // keep only available
+                                    .map(a -> convertToResponse(a, null))
+                                    .toList();
+
+                    String specializationNames = doctor.getSpecializations()
+                            .stream()
+                            .map(Specialization::getName)
+                            .collect(Collectors.joining(", "));
+
+                    return new DoctorWithAvailabilityResponse(
+                            doctor.getId(),
+                            doctor.getUser().getFullName(),
+                            doctor.getUser().getEmail(),
+                            specializationNames,
+                            doctor.getDepartment().getName(),
+                            doctor.getQualification(),
+                            doctor.getExperienceYears(),
+                            availabilityResponses
+                    );
+                })
+                .toList();
+    }
+
     public DoctorAvailabilityResponse getAvailabilityByDay(Long doctorId, String day) {
         // Validate doctor exists
         doctorRepository.findById(doctorId)
@@ -177,7 +217,7 @@ public class DoctorAvailabilityService {
     }
 
     // Helper method to convert entity to response
-    private DoctorAvailabilityResponse convertToResponse(DoctorAvailability availability, String message) {
+    public DoctorAvailabilityResponse convertToResponse(DoctorAvailability availability, String message) {
         DoctorAvailabilityResponse response = new DoctorAvailabilityResponse();
         response.setId(availability.getId());
         response.setDoctorId(availability.getDoctor().getId());

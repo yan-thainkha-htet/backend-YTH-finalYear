@@ -15,12 +15,12 @@ public class CreateReceptionistRequest {
 
 
 
-    @NotNull(message = "Shift is required")
+//    @NotNull(message = "Shift is required")
     private Receptionist.Shift shift;
 
     private Integer deskNumber;
 
-    @NotBlank(message = "Username is required")
+//    @NotBlank(message = "Username is required")
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
     @Pattern(regexp = "^[\\w!@#$%^&*()\\-+={}\\[\\]:;\"'<>,.?/|\\\\~`]+$",
             message = "Username must contain only alphanumeric and special characters")

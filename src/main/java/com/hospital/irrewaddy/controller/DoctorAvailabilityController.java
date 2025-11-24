@@ -1,9 +1,6 @@
 package com.hospital.irrewaddy.controller;
 
-import com.hospital.irrewaddy.dto.ApiResponse;
-import com.hospital.irrewaddy.dto.BulkAvailabilityRequest;
-import com.hospital.irrewaddy.dto.DoctorAvailabilityRequest;
-import com.hospital.irrewaddy.dto.DoctorAvailabilityResponse;
+import com.hospital.irrewaddy.dto.*;
 import com.hospital.irrewaddy.service.DoctorAvailabilityService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

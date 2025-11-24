@@ -3,6 +3,7 @@ package com.hospital.irrewaddy.dto;
 import com.hospital.irrewaddy.model.User;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class DoctorResponse {
     private Long id;
@@ -21,9 +22,26 @@ public class DoctorResponse {
     private String departmentName;
     private Boolean isActive;
     private String message;
+    private List<DoctorAvailabilityResponse> availability;
 
     // Constructors
     public DoctorResponse() {
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public List<DoctorAvailabilityResponse> getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(List<DoctorAvailabilityResponse> availability) {
+        this.availability = availability;
     }
 
     public DoctorResponse(Long id, Long userId, String username, String fullName, String email,

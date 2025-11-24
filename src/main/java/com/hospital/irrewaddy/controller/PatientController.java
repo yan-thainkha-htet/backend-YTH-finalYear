@@ -1,6 +1,7 @@
 package com.hospital.irrewaddy.controller;
 
 import com.hospital.irrewaddy.dto.*;
+import com.hospital.irrewaddy.service.DoctorAvailabilityService;
 import com.hospital.irrewaddy.service.DoctorService;
 import com.hospital.irrewaddy.service.PatientService;
 import jakarta.validation.Valid;
@@ -19,6 +20,9 @@ public class PatientController {
 
     @Autowired
     private PatientService patientService;
+
+    @Autowired
+    private DoctorAvailabilityService availabilityService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST')")
@@ -42,5 +46,9 @@ public class PatientController {
         }
     }
 
-
+    @GetMapping("/with-availability")
+    public ResponseEntity<List<DoctorWithAvailabilityResponse>> getAllDoctorsWithAvailability() {
+        List<DoctorWithAvailabilityResponse> response = availabilityService.getAllDoctorsWithAvailability();
+        return ResponseEntity.ok(response);
+    }
 }

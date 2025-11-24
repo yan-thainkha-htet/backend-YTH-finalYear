@@ -2,10 +2,7 @@ package com.hospital.irrewaddy.service;
 
 import com.hospital.irrewaddy.dto.*;
 import com.hospital.irrewaddy.model.*;
-import com.hospital.irrewaddy.repository.DepartmentRepository;
-import com.hospital.irrewaddy.repository.DoctorRepository;
-import com.hospital.irrewaddy.repository.SpecializationRepository;
-import com.hospital.irrewaddy.repository.UserRepository;
+import com.hospital.irrewaddy.repository.*;
 import com.hospital.irrewaddy.security.CustomUserDetails;
 import com.hospital.irrewaddy.security.JwtUtil;
 import com.hospital.irrewaddy.util.ValidationUtil;
@@ -40,6 +37,13 @@ public class DoctorService {
 
     @Autowired
     private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private DoctorAvailabilityRepository availabilityRepository;
+
+    @Autowired
+    private DoctorAvailabilityService availabilityService;
+
 
     @Transactional
     public CreateDoctorResponse createDoctor(CreateDoctorRequest request) {
@@ -285,6 +289,10 @@ public class DoctorService {
 
     // Helper method to convert Doctor to Response
     private DoctorResponse convertToResponse(Doctor doctor, String message) {
+        String specializationNames = doctor.getSpecializations()
+                .stream()
+                .map(Specialization::getName)
+                .collect(Collectors.joining(", "));
         DoctorResponse response = new DoctorResponse();
         response.setId(doctor.getId());
         response.setUserId(doctor.getUser().getId());
@@ -295,9 +303,17 @@ public class DoctorService {
         response.setQualification(doctor.getQualification());
         response.setExperienceYears(doctor.getExperienceYears());
         response.setBio(doctor.getBio());
+        response.setSpecialization(specializationNames);
         response.setDepartmentName(doctor.getDepartment() != null ? doctor.getDepartment().getName() : null);
         response.setIsActive(doctor.getUser().getIsActive());
         response.setMessage(message);
+        List<DoctorAvailabilityResponse> availabilityResponses =
+                availabilityRepository.findByDoctorId(doctor.getId())
+                        .stream()
+                        .filter(DoctorAvailability::getAvailable) // keep only available
+                        .map(a -> availabilityService.convertToResponse(a, null))
+                        .toList();
+        response.setAvailability(availabilityResponses);
         return response;
     }
 }
