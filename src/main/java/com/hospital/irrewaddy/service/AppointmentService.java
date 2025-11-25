@@ -37,7 +37,7 @@ public class AppointmentService {
     @Transactional
     public AppointmentResponse createAppointment(CreateAppointmentRequest request, String username) {
         // Get patient by username
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameOrEmail(username, username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Patient patient = patientRepository.findByUserId(user.getId())
@@ -147,6 +147,19 @@ public class AppointmentService {
         return appointments.stream()
                 .map(apt -> convertToResponse(apt, null))
                 .collect(Collectors.toList());
+    }
+
+    public AppointmentStats getTodayAppointmentsSummary() {
+        long pendingCount = appointmentRepository.countByStatusAndAppointmentDate(Appointment.AppointmentStatus.PENDING, LocalDate.now());
+        long confirmedCount = appointmentRepository.countByStatusAndAppointmentDate(Appointment.AppointmentStatus.CONFIRMED, LocalDate.now());
+        long completedCount = appointmentRepository.countByStatusAndAppointmentDate(Appointment.AppointmentStatus.COMPLETED, LocalDate.now());
+        long cancelledCount = appointmentRepository.countByStatusAndAppointmentDate(Appointment.AppointmentStatus.CANCELLED, LocalDate.now());
+        AppointmentStats stats = new AppointmentStats();
+        stats.setPending(pendingCount);
+        stats.setCancelled(cancelledCount);
+        stats.setCompleted(completedCount);
+        stats.setConfirmed(confirmedCount);
+        return stats;
     }
 
     public List<AppointmentResponse> getDoctorTodayAppointments(Long doctorId) {

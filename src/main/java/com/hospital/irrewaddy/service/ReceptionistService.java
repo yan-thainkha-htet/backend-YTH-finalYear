@@ -189,6 +189,9 @@ public class ReceptionistService {
         response.setGender(receptionist.getUser().getGender());
         response.setFullName(receptionist.getUser().getFullName());
         response.setIsActive(receptionist.getUser().getIsActive());
+        response.setDeskNumber(receptionist.getDeskNumber());
+        response.setShift(receptionist.getShift());
+        response.setManagedAppointmentsCount(receptionist.getManagedAppointments().size());
         response.setMessage(message);
         return response;
     }

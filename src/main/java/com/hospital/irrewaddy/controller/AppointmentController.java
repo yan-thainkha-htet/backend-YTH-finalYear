@@ -165,6 +165,18 @@ public class AppointmentController {
         }
     }
 
+    // Get doctor's today appointments (Doctor or Admin)
+    @GetMapping("/today-summary")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN', 'RECEPTIONIST')")
+    public ResponseEntity<?> getTodayAppointmentsSummary(Authentication authentication) {
+        try {
+            AppointmentStats stats = appointmentService.getTodayAppointmentsSummary();
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
     // Update appointment status (Doctor or Admin)
     @PutMapping("/{id}/status")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")

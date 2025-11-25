@@ -294,8 +294,13 @@ public class DashboardService {
             long confirmedCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.CONFIRMED);
             long completedCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.COMPLETED);
             long cancelledCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.CANCELLED);
-
-            return new AppointmentStats(todayAppointment, pendingCount, confirmedCount, completedCount, cancelledCount);
+            AppointmentStats stats = new AppointmentStats();
+            stats.setTodayTotal(todayAppointment);
+            stats.setPending(pendingCount);
+            stats.setConfirmed(confirmedCount);
+            stats.setCompleted(completedCount);
+            stats.setCancelled(cancelledCount);
+            return stats;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
