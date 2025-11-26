@@ -12,7 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -94,14 +97,51 @@ public class PatientService {
         return convertToResponse(patient, null);
     }
 
+    @Transactional
+    public void toggleActiveStatus(Long id) {
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
+        User user = patient.getUser();
+        user.setIsActive(!user.getIsActive());
+        userRepository.save(user);
+    }
+
+    public List<PatientResponse> getAllPatients() {
+        List<Patient> patients = patientRepository.findAll();
+        List<PatientResponse> resList = new java.util.ArrayList<>(List.of());
+        for (Patient p : patients) {
+            PatientResponse res = convertToResponse(p, null);
+            resList.add(res);
+        }
+        return resList;
+    }
+
     public PatientResponse getPatientByUserId(Long id) {
         Patient patient = patientRepository.findByUserId(id)
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
         return convertToResponse(patient, null);
     }
 
+    public int ageCalculate(LocalDate dob) {
+        LocalDate birthDate = LocalDate.of(dob.getYear(), dob.getMonth(), dob.getDayOfMonth()); // YYYY, MM, DD
+        LocalDate today = LocalDate.now();
+
+        return Period.between(birthDate, today).getYears();
+    }
+
     private PatientResponse convertToResponse(Patient patient, Object o) {
-        PatientResponse patientResponse = new PatientResponse(patient.getId(), patient.getBloodGroup());
+        PatientResponse patientResponse = new PatientResponse();
+        patientResponse.setBloodGroup(patient.getBloodGroup());
+        patientResponse.setId(patient.getId());
+        patientResponse.setPhone(patient.getUser().getPhone());
+        patientResponse.setEmail(patient.getUser().getEmail());
+        patientResponse.setGender(patient.getUser().getGender());
+        patientResponse.setUserId(patient.getUser().getId());
+        patientResponse.setFullName(patient.getUser().getFullName());
+        patientResponse.setActive(patient.getUser().getIsActive());
+        if (patient.getUser().getDateOfBirth() != null) {
+            patientResponse.setAge(ageCalculate(patient.getUser().getDateOfBirth()));
+        }
         return patientResponse;
     }
 

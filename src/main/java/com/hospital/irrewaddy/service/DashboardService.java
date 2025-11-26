@@ -293,13 +293,13 @@ public class DashboardService {
             long pendingCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.PENDING);
             long confirmedCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.CONFIRMED);
             long completedCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.COMPLETED);
-            long cancelledCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.CANCELLED);
+            long noShowCount = appointmentRepository.countByStatus(Appointment.AppointmentStatus.NO_SHOW);
             AppointmentStats stats = new AppointmentStats();
             stats.setTodayTotal(todayAppointment);
             stats.setPending(pendingCount);
             stats.setConfirmed(confirmedCount);
             stats.setCompleted(completedCount);
-            stats.setCancelled(cancelledCount);
+            stats.setNoShow(noShowCount);
             return stats;
         } catch (Exception e) {
             throw new RuntimeException(e);

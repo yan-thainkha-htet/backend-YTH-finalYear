@@ -76,7 +76,7 @@ public class AppointmentController {
 
     // Get appointment by ID
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR', 'ADMIN', 'RECEPTIONIST')")
     public ResponseEntity<?> getAppointmentById(@PathVariable Long id) {
         try {
             AppointmentResponse appointment = appointmentService.getAppointmentById(id);
@@ -87,8 +87,8 @@ public class AppointmentController {
     }
 
     // Get all appointments (Admin only)
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST')")
     public ResponseEntity<?> getAllAppointments() {
         try {
             List<AppointmentResponse> appointments = appointmentService.getAllAppointments();
@@ -179,7 +179,7 @@ public class AppointmentController {
 
     // Update appointment status (Doctor or Admin)
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN', 'RECEPTIONIST')")
     public ResponseEntity<?> updateAppointmentStatus(@PathVariable Long id,
                                                      @Valid @RequestBody UpdateAppointmentStatusRequest request) {
         try {

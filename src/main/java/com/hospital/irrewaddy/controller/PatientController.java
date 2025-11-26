@@ -36,6 +36,17 @@ public class PatientController {
     }
 
     @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST', 'PATIENT')")
+    @GetMapping
+    public ResponseEntity<?> getAllPatients() {
+        try {
+            List<PatientResponse> patients = patientService.getAllPatients();
+            return ResponseEntity.ok(patients);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST', 'PATIENT')")
     @GetMapping("/{id}")
     public ResponseEntity<?> getPatientById(@PathVariable Long id) {
         try {
@@ -45,6 +56,18 @@ public class PatientController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST')")
+    @GetMapping("/{id}/toggle-status")
+    public ResponseEntity<?> toggleActiveStatus(@PathVariable Long id) {
+        try {
+            patientService.toggleActiveStatus(id);
+            return ResponseEntity.ok("Patient status was changed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
 
     @GetMapping("/with-availability")
     public ResponseEntity<List<DoctorWithAvailabilityResponse>> getAllDoctorsWithAvailability() {
