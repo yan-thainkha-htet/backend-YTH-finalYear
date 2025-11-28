@@ -36,16 +36,16 @@ public class ReceptionistController {
     }
 
     // Get all receptionists (Admin only)
-//    @GetMapping
-//    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
-//    public ResponseEntity<?> getAllReceptionists() {
-//        try {
-//            List<ReceptionistResponse> receptionists = receptionistService.getAllReceptionists();
-//            return ResponseEntity.ok(receptionists);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-//        }
-//    }
+    @GetMapping
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN')")
+    public ResponseEntity<?> getAllReceptionists() {
+        try {
+            List<ReceptionistResponse> receptionists = receptionistService.getAllReceptionists();
+            return ResponseEntity.ok(receptionists);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 
     // Get active receptionists
 //    @GetMapping("/active")

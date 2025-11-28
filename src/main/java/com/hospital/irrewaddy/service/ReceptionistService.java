@@ -210,17 +210,30 @@ public class ReceptionistService {
         return response;
     }
 
-//    public List<ReceptionistResponse> getAllReceptionists() {
-//        return receptionistRepository.findAll().stream()
-//                .map(receptionist -> convertToResponse(receptionist, null))
-//                .collect(Collectors.toList());
-//    }
-//
-//    public List<ReceptionistResponse> getActiveReceptionists() {
-//        return receptionistRepository.findByUser_IsActiveTrue().stream()
-//                .map(receptionist -> convertToResponse(receptionist, null))
-//                .collect(Collectors.toList());
-//    }
+    private ReceptionistResponse convertReceptToResponse(Receptionist receptionist, String message) {
+        ReceptionistResponse response = new ReceptionistResponse();
+        response.setId(receptionist.getId());
+        response.setUsername(receptionist.getUser().getUsername());
+        response.setEmail(receptionist.getUser().getEmail());
+        response.setPhone(receptionist.getUser().getPhone());
+        response.setGender(receptionist.getUser().getGender());
+        response.setFullName(receptionist.getUser().getFullName());
+        response.setIsActive(receptionist.getUser().getIsActive());
+        response.setMessage(message);
+        return response;
+    }
+
+    public List<ReceptionistResponse> getAllReceptionists() {
+        return receptionistRepository.findAll().stream()
+                .map(receptionist -> convertToReceptionistResponse(receptionist, null))
+                .collect(Collectors.toList());
+    }
+
+    public List<ReceptionistResponse> getActiveReceptionists() {
+        return receptionistRepository.findByUser_IsActiveTrue().stream()
+                .map(receptionist -> convertToReceptionistResponse(receptionist, null))
+                .collect(Collectors.toList());
+    }
 //
 //    public List<ReceptionistResponse> getReceptionistsByShift(Receptionist.Shift shift) {
 //        return receptionistRepository.findByShift(shift).stream()

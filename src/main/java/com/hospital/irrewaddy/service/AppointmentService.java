@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,18 +92,41 @@ public class AppointmentService {
     }
 
     public List<AppointmentResponse> getMyAppointments(String username) {
+
         User user = userRepository.findByUsernameOrEmail(username, username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Patient patient = patientRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new RuntimeException("Patient profile not found"));
+        // Check if user is patient
+        Optional<Patient> patientOpt = patientRepository.findByUserId(user.getId());
 
-        List<Appointment> appointments = appointmentRepository
-                .findByPatientIdOrderByAppointmentDateDescAppointmentTimeDesc(patient.getId());
+        // Check if user is doctor
+        Optional<Doctor> doctorOpt = doctorRepository.findByUserId(user.getId());
 
-        return appointments.stream()
-                .map(apt -> convertToResponse(apt, null))
-                .collect(Collectors.toList());
+        List<Appointment> appointments = new ArrayList<>();
+
+        if (patientOpt.isPresent()) {
+            // USER IS A PATIENT
+            Long patientId = patientOpt.get().getId();
+            appointments = appointmentRepository
+                    .findByPatientIdOrderByAppointmentDateDescAppointmentTimeDesc(patientId);
+
+            return appointments.stream()
+                    .map(apt -> convertToResponse(apt, null))
+                    .collect(Collectors.toList());
+        }
+
+        if (doctorOpt.isPresent()) {
+            // USER IS A DOCTOR
+            Long doctorId = doctorOpt.get().getId();
+            appointments = appointmentRepository
+                    .findByDoctorIdOrderByAppointmentDateAscAppointmentTimeDesc(doctorId);
+
+            return appointments.stream()
+                    .map(apt -> convertToResponse(apt, null))
+                    .collect(Collectors.toList());
+        }
+
+        throw new RuntimeException("User must be either Patient or Doctor");
     }
 
     public List<AppointmentResponse> getUpcomingAppointments(String username) {

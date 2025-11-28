@@ -38,7 +38,7 @@ public class AppointmentController {
 
     // Get my appointments (Patient only)
     @GetMapping("/my-appointments")
-    @PreAuthorize("hasRole('PATIENT')")
+    @PreAuthorize("hasAnyRole('PATIENT', 'DOCTOR')")
     public ResponseEntity<?> getMyAppointments(Authentication authentication) {
         try {
             String username = authentication.getName();
@@ -88,7 +88,7 @@ public class AppointmentController {
 
     // Get all appointments (Admin only)
     @GetMapping("/all")
-    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST')")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN', 'ADMIN', 'RECEPTIONIST', 'DOCTOR')")
     public ResponseEntity<?> getAllAppointments() {
         try {
             List<AppointmentResponse> appointments = appointmentService.getAllAppointments();
